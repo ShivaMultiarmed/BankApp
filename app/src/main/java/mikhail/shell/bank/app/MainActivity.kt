@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import mikhail.shell.bank.app.ui.HomeScreen
+import mikhail.shell.bank.app.ui.ProfileScreen
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
 import mikhail.shell.bank.app.ui.sections.home.CurrenciesSection
 import mikhail.shell.bank.app.ui.sections.home.FinanceSection
@@ -41,7 +42,8 @@ class MainActivity : ComponentActivity() {
                         BottomNavigationBar()
                     }
                 ) { innerPadding ->
-                    HomeScreen(innerPadding)
+                    //HomeScreen(innerPadding)
+                    ProfileScreen(innerPadding)
                 }
 
             }

@@ -1,6 +1,8 @@
 package mikhail.shell.bank.app.ui.sections.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,8 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,11 +34,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchColors
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +58,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import mikhail.shell.bank.app.data.ToggleableInfo
 import mikhail.shell.bank.app.data.User
 
 val user = User(4846L, "John Smith", "qwerty", "Мужчина")
@@ -66,7 +76,7 @@ fun UserDataSection()
     ) {
         SwitchingTextEdit("Имя", user.name)
         SwitchingTextEdit("Пароль", user.password, true)
-        Dropdown(listOf("Мужчина", "Женщина"), "Гендер")
+        Dropdown(listOf("Мужчина", "Женщина"), user.gender)
     }
 }
 
@@ -79,7 +89,7 @@ fun TextEdit(
     isSecret: Boolean = false)
 {
     var text by remember {
-        mutableStateOf("")
+        mutableStateOf(text)
     }
     OutlinedTextField(
         enabled = isEnabled,
@@ -98,7 +108,8 @@ fun TextEdit(
         },
         value = text,
         onValueChange = { text = it },
-        visualTransformation = if (!isSecret) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (!isSecret || isEnabled) VisualTransformation.None
+                                else PasswordVisualTransformation()
     )
 }
 //@Preview
@@ -108,9 +119,6 @@ fun SwitchingTextEdit(label: String = "Введите текст", text: String 
     var isEnabled by remember {
         mutableStateOf(false)
     }
-    var oldText by remember {
-        mutableStateOf("")
-    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,7 +126,7 @@ fun SwitchingTextEdit(label: String = "Введите текст", text: String 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        TextEdit(label, text, isEnabled)
+        TextEdit(label, text, isEnabled, isSecret)
         if (isEnabled)
         {
             EditButton(Color(24, 78, 4, 255), Icons.Rounded.Check)
@@ -135,9 +143,9 @@ fun SwitchingTextEdit(label: String = "Введите текст", text: String 
 
 }
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
+//@Preview
 @Composable
-fun Dropdown(genderList: List<String> = emptyList(), value: String = "")
+fun Dropdown(genderList: List<String> = emptyList(), value: String = "Гендер")
 {
     var selected: String by remember {
         mutableStateOf(value)
@@ -148,7 +156,6 @@ fun Dropdown(genderList: List<String> = emptyList(), value: String = "")
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
     ){
         ExposedDropdownMenuBox(
             expanded = isExpanded,
@@ -202,7 +209,7 @@ fun Dropdown(genderList: List<String> = emptyList(), value: String = "")
     }
 
 }
-@Preview
+//@Preview
 @Composable
 fun EditButton(
     color: Color = Color(24, 78, 4, 255),
@@ -226,5 +233,138 @@ fun EditButton(
             imageVector = imageVector,
             tint = Color.White
         )
+    }
+}
+@Preview
+@Composable
+fun NotificationsChooserSection()
+{
+    val options = remember {
+        mutableStateListOf(
+            ToggleableInfo("Расходы", false),
+            ToggleableInfo("Доходы", true)
+        )
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        Text(
+            "Уведомления:",
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 18.sp)
+        options.forEachIndexed { i, option ->
+            Row(
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) {
+                        options[i] = options[i].copy(isChecked = !options[i].isChecked)
+                    },
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Checkbox(
+                    checked = option.isChecked,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = MaterialTheme.colorScheme.secondary
+                    ),
+                    onCheckedChange = {
+                        isChecked -> options[i] = options[i].copy(isChecked = isChecked)
+                    }
+                )
+                Text(text = option.title)
+            }
+        }
+    }
+}
+@Preview
+@Composable
+fun SyncSwitchSection()
+{
+    var isSyncEnabled by remember {
+        mutableStateOf(true)
+    }
+    Row(
+        modifier = Modifier
+            .wrapContentHeight()
+            .background(MaterialTheme.colorScheme.surface),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ){
+        Switch(
+            modifier = Modifier,
+            checked = isSyncEnabled,
+            onCheckedChange = { isChecked -> isSyncEnabled = isChecked },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                uncheckedThumbColor = Color.Gray,
+                uncheckedTrackColor = MaterialTheme.colorScheme.secondary
+            ),
+            thumbContent = {
+                Icon(
+                    imageVector = if (isSyncEnabled) Icons.Rounded.Check else Icons.Rounded.Close,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            }
+        )
+        Text(
+            "Включить синхронизацию",
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 16.sp
+        )
+    }
+}
+@Preview
+@Composable
+fun LanguageChooserSection()
+{
+    val languages = remember {
+        mutableStateListOf(
+            ToggleableInfo("Русский", true),
+            ToggleableInfo("English", false)
+        )
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Text(
+            "Язык:",
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 18.sp)
+        languages.forEachIndexed { i, language ->
+            Row(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .background(MaterialTheme.colorScheme.background)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource () },
+                        indication = null
+                    ) {
+                        languages.replaceAll { it.copy(isChecked = false) }
+                        languages[i] = languages[i].copy(isChecked = true)
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                RadioButton(
+                    selected = language.isChecked,
+                    onClick = {
+                        languages.replaceAll { it.copy(isChecked = false) }
+                        languages[i] = languages[i].copy(isChecked = true)
+                    }
+                )
+                Text(text = language.title)
+            }
+        }
     }
 }
