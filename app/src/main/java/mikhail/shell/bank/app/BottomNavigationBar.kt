@@ -57,7 +57,7 @@ fun BottomNavigationBar()
                 NavigationBarItem(
                     selected = selectedIcon == i,
                     onClick = {
-                        selectedIcon = i
+                        // selectedIcon = i
                     },
                     icon = {
                         Icon(
