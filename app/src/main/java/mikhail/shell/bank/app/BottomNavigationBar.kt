@@ -24,19 +24,21 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import mikhail.shell.bank.app.BottomNavigationItem.*
 
-data class BottomNavigationItem(
+sealed class BottomNavigationItem(
     val title: String,
     val route: String,
     val icon: ImageVector
 )
+{
+    data object Home : BottomNavigationItem("Главная", "home", Icons.Rounded.Home)
+    data object Wallet: BottomNavigationItem("Кошелек", "wallet", Icons.Rounded.ShoppingCart)
+    data object Notifications: BottomNavigationItem("Уведомления", "notifications", Icons.Rounded.Notifications)
+    data object Profile: BottomNavigationItem("Профиль", "person/4846", Icons.Rounded.AccountCircle)
+}
 
-val items = listOf(
-    BottomNavigationItem("Главная", "home", Icons.Rounded.Home),
-    BottomNavigationItem("Кошелек", "wallet", Icons.Rounded.ShoppingCart),
-    BottomNavigationItem("Уведомления", "notifications", Icons.Rounded.Notifications),
-    BottomNavigationItem("Профиль", "profile", Icons.Rounded.AccountCircle)
-)
+val items = listOf(Home, Wallet, Notifications, Profile)
 
 //@Preview
 @Composable
