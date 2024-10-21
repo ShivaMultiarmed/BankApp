@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import mikhail.shell.bank.app.ui.HomeScreen
 import mikhail.shell.bank.app.ui.ProfileScreen
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
@@ -31,6 +34,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val navController = rememberNavController()
             BankAppTheme {
                 Scaffold(
                     modifier = Modifier
@@ -39,11 +43,22 @@ class MainActivity : ComponentActivity() {
                         TopBar()
                     },
                     bottomBar = {
-                        BottomNavigationBar()
+                        BottomNavigationBar(navController)
                     }
                 ) { innerPadding ->
-                    //HomeScreen(innerPadding)
-                    ProfileScreen(innerPadding)
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home"
+                    ){
+                        composable("home") {
+                            HomeScreen(innerPadding)
+                        }
+                        composable("profile")
+                        {
+                            ProfileScreen(innerPadding)
+                        }
+                    }
                 }
 
             }

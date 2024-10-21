@@ -22,22 +22,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 
 data class BottomNavigationItem(
     val title: String,
+    val route: String,
     val icon: ImageVector
 )
 
 val items = listOf(
-    BottomNavigationItem("Главная", Icons.Rounded.Home),
-    BottomNavigationItem("Кошелек", Icons.Rounded.ShoppingCart),
-    BottomNavigationItem("Уведомления", Icons.Rounded.Notifications),
-    BottomNavigationItem("Профиль", Icons.Rounded.AccountCircle)
+    BottomNavigationItem("Главная", "home", Icons.Rounded.Home),
+    BottomNavigationItem("Кошелек", "wallet", Icons.Rounded.ShoppingCart),
+    BottomNavigationItem("Уведомления", "notifications", Icons.Rounded.Notifications),
+    BottomNavigationItem("Профиль", "profile", Icons.Rounded.AccountCircle)
 )
 
-@Preview
+//@Preview
 @Composable
-fun BottomNavigationBar()
+fun BottomNavigationBar(navController: NavController)
 {
     var selectedIcon by remember {
         mutableStateOf(0)
@@ -57,7 +60,13 @@ fun BottomNavigationBar()
                 NavigationBarItem(
                     selected = selectedIcon == i,
                     onClick = {
-                        // selectedIcon = i
+                        selectedIcon = i
+                        navController.navigate(item.route)
+                        {
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     },
                     icon = {
                         Icon(
