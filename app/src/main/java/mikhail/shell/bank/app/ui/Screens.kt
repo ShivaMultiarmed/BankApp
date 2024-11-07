@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import mikhail.shell.bank.app.Route
 import mikhail.shell.bank.app.data.SectionsSpacer
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
 import mikhail.shell.bank.app.ui.sections.home.CurrenciesSection
@@ -108,7 +109,7 @@ fun SettingsScreen(navController: NavController = rememberNavController())
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Button(onClick = { navController.navigate("settings/advanced") }) {
+        Button(onClick = { navController.navigate(Route.AdvancedSettingsRoute) }) {
             Text("Дополнительно")
         }
         Text(text = "Базовые настройки", color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)
