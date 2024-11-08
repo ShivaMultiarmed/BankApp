@@ -48,7 +48,7 @@ sealed class BottomNavigationItem<T>(
     data object Home : BottomNavigationItem<Route.HomeScreenRoute>(Route.HomeScreenRoute,"Главная", Icons.Rounded.Home)
     data object Wallet: BottomNavigationItem<Route.WalletScreenRoute>(Route.WalletScreenRoute,"Кошелек", Icons.Rounded.ShoppingCart)
     data object Notifications: BottomNavigationItem<Route.NotificationsScreenRoute>(Route.NotificationsScreenRoute, "Уведомления", Icons.Rounded.Notifications, 4546)
-    data object Profile: BottomNavigationItem<Route.ProfileScreenRoute>(Route.ProfileScreenRoute(100500),"Профиль", Icons.Rounded.AccountCircle, 1267)
+    data object Profile: BottomNavigationItem<Route.ProfileGraphRoute.ProfileScreenRoute>(Route.ProfileGraphRoute.ProfileScreenRoute(User(404, "Glenn", "abcde", "Мужчина")),"Профиль", Icons.Rounded.AccountCircle, 1267)
 }
 
 val items = listOf(

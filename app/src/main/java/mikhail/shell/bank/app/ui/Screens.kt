@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import mikhail.shell.bank.app.Route
+import mikhail.shell.bank.app.User
 import mikhail.shell.bank.app.data.SectionsSpacer
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
 import mikhail.shell.bank.app.ui.sections.home.CurrenciesSection
@@ -63,9 +64,9 @@ fun HomeScreen(navController: NavController = rememberNavController(), innerPadd
     }
 }
 
-@Preview
+//@Preview
 @Composable
-fun ProfileScreen(navController: NavController = rememberNavController(), userid: Long = 1L, innerPadding: PaddingValues = PaddingValues(0.dp))
+fun ProfileScreen(navController: NavController = rememberNavController(), user: User, innerPadding: PaddingValues = PaddingValues(0.dp))
 {
     val scrollState = rememberScrollState()
     Column (
@@ -80,15 +81,15 @@ fun ProfileScreen(navController: NavController = rememberNavController(), userid
     )
     {
         AvatarSection()
-        UserDataSection()
+        UserDataSection(user)
         SectionsSpacer()
         NotificationsChooserSection()
         SectionsSpacer()
         Column(modifier = Modifier.fillMaxWidth())
         {
-            Text(text = "This is a user number $userid")
+            Text(text = "This is ${user.name}'s profile")
            Button(onClick = {
-                navController.navigate("settings")
+                navController.navigate(Route.ProfileGraphRoute.SettingsGraphRoute.SettingsScreenRoute)
            }) {
                Text("Настройки")
            }
@@ -109,7 +110,7 @@ fun SettingsScreen(navController: NavController = rememberNavController())
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Button(onClick = { navController.navigate(Route.AdvancedSettingsRoute) }) {
+        Button(onClick = { navController.navigate(Route.ProfileGraphRoute.SettingsGraphRoute.AdvancedSettingsRoute) }) {
             Text("Дополнительно")
         }
         Text(text = "Базовые настройки", color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)

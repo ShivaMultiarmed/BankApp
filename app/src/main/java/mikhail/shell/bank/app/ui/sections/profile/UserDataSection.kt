@@ -59,13 +59,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.data.ToggleableInfo
-import mikhail.shell.bank.app.data.User
-
-val user = User(4846L, "John Smith", "qwerty", "Мужчина")
+import mikhail.shell.bank.app.User
 
 @Preview
 @Composable
-fun UserDataSection()
+fun UserDataSection(user: User = User(0L,"default", "default", "default"))
 {
     Column(
         modifier = Modifier

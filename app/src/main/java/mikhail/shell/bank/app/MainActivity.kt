@@ -1,6 +1,8 @@
 package mikhail.shell.bank.app
 
+import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
@@ -22,35 +24,77 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import mikhail.shell.bank.app.ui.AdvancedSettingsScreen
 import mikhail.shell.bank.app.ui.HomeScreen
 import mikhail.shell.bank.app.ui.ProfileScreen
 import mikhail.shell.bank.app.ui.SettingsScreen
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
+
+@Serializable
+@Parcelize
+data class User(val userid: Long, val name: String, val password: String, val gender: String) : Parcelable
+
+
+class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerializer<T>) : NavType<T>(isNullableAllowed = false)
+{
+    override fun get(bundle: Bundle, key: String): T? {
+        return (
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU )
+                bundle.getParcelable(key, klass) as T
+            else
+                bundle.getParcelable(key)
+        )
+    }
+
+    override fun parseValue(value: String): T = Json.decodeFromString(serializer, value)
+
+    override fun serializeAsValue(value: T): String = Json.encodeToString(serializer, value)
+
+    override fun put(bundle: Bundle, key: String, value: T) = bundle.putParcelable(key, value)
+
+    companion object {
+        inline fun <reified T : Parcelable> getMap(serializer: KSerializer<T>): Map<KType, AppNavType<T>> {
+            return mapOf(
+                typeOf<T>() to AppNavType(T::class.java, serializer)
+            )
+        }
+    }
+}
 
 @Serializable
 sealed class Route{
     @Serializable
-    object HomeScreenRoute:Route() {}
+    object HomeScreenRoute
     @Serializable
-    object ProfileGraphRoute:Route() {}
+    object ProfileGraphRoute {
+        @Serializable
+        data class ProfileScreenRoute(val user: User)
+        @Serializable
+        object SettingsGraphRoute{
+            @Serializable
+            object SettingsScreenRoute
+            @Serializable
+            object AdvancedSettingsRoute
+        }
+    }
     @Serializable
-    data class ProfileScreenRoute(val userid: Long = 100500):Route() {}
+    object NotificationsScreenRoute
     @Serializable
-    object NotificationsScreenRoute:Route() {}
-    @Serializable
-    object WalletScreenRoute:Route() {}
-    @Serializable
-    object SettingsScreenRoute:Route()
-    @Serializable
-    object SettingsGraphRoute:Route()
-    @Serializable
-    object AdvancedSettingsRoute:Route()
+    object WalletScreenRoute
 }
 
 
@@ -133,34 +177,30 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
 }
 fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues)
 {
-    composable<Route.ProfileScreenRoute>
-    { navBackStackEntry ->
-        //val userid = navBackStackEntry.arguments?.getLong("userid")
-        val userid = 100500L
-        ProfileScreen(navController, userid!!, innerPadding)
-    }
-    /*navigation<Route.ProfileGraphRoute>(
-        startDestination = Route.ProfileScreenRoute
+
+    navigation<Route.ProfileGraphRoute>(
+        startDestination = Route.ProfileGraphRoute.ProfileScreenRoute::class
     )
     {
-        composable<Route.ProfileScreenRoute>
-        { navBackStackEntry ->
-            //val userid = navBackStackEntry.arguments?.getLong("userid")
-            val userid = 100500L
-            ProfileScreen(navController, userid!!, innerPadding)
+        composable<Route.ProfileGraphRoute.ProfileScreenRoute>(
+            typeMap = AppNavType.Companion.getMap(User.serializer())
+        ) { navBackStackEntry ->
+            val args = navBackStackEntry.toRoute<Route.ProfileGraphRoute.ProfileScreenRoute>()
+            val user = args.user
+            ProfileScreen(navController, user, innerPadding)
         }
         goToSettings(navController, innerPadding)
-    }*/
+    }
 
 }
 fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: PaddingValues)
 {
-    navigation<Route.SettingsGraphRoute>(
-        startDestination = Route.SettingsScreenRoute
+    navigation<Route.ProfileGraphRoute.SettingsGraphRoute>(
+        startDestination = Route.ProfileGraphRoute.SettingsGraphRoute.SettingsScreenRoute::class
     )
     {
         val animationDuration = 300
-        composable<Route.SettingsScreenRoute>(
+        composable<Route.ProfileGraphRoute.SettingsGraphRoute.SettingsScreenRoute>(
             enterTransition = {
                 fadeIn(
                     initialAlpha = 0f,
@@ -197,7 +237,7 @@ fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: Pad
         {
             SettingsScreen(navController)
         }
-        composable<Route.AdvancedSettingsRoute>(
+        composable<Route.ProfileGraphRoute.SettingsGraphRoute.AdvancedSettingsRoute>(
             enterTransition = {
                 scaleIn(
                     initialScale = 0f,
