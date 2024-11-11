@@ -44,8 +44,8 @@ fun WalletSection()
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-            Text(text = "Баланс", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
-            Text(text = "₽ 35000.98", color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp)
+            Text(text = "Баланс", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onBackground)
+            Text(text = "₽ 35000.98", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         }
         Box(
             modifier = Modifier

@@ -35,22 +35,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import mikhail.shell.bank.app.ui.theme.spacing
 import kotlin.reflect.KClass
 
-sealed class BottomNavigationItem<T>(
+sealed class BottomNavigationItem<T : Route>(
     val route: T,
     val title: String,
     val icon: ImageVector,
     var count: Int = 0
 )
 {
-    data object Home : BottomNavigationItem<Route.HomeScreenRoute>(Route.HomeScreenRoute,"Главная", Icons.Rounded.Home)
-    data object Wallet: BottomNavigationItem<Route.WalletScreenRoute>(Route.WalletScreenRoute,"Кошелек", Icons.Rounded.ShoppingCart)
-    data object Notifications: BottomNavigationItem<Route.NotificationsScreenRoute>(Route.NotificationsScreenRoute, "Уведомления", Icons.Rounded.Notifications, 4546)
-    data object Profile: BottomNavigationItem<Route.ProfileGraphRoute.ProfileScreenRoute>(Route.ProfileGraphRoute.ProfileScreenRoute(User(404, "Glenn", "abcde", "Мужчина")),"Профиль", Icons.Rounded.AccountCircle, 1267)
+    data object Home : BottomNavigationItem<Route>(
+        Route.HomeScreenRoute,
+        "Главная",
+        Icons.Rounded.Home)
+    data object Wallet: BottomNavigationItem<Route>(
+        Route.WalletScreenRoute,
+        "Кошелек",
+        Icons.Rounded.ShoppingCart
+    )
+    data object Notifications: BottomNavigationItem<Route>(
+        Route.NotificationsScreenRoute,
+        "Уведомления",
+        Icons.Rounded.Notifications,
+        4546
+    )
+    data object Profile: BottomNavigationItem<Route>(
+        Route.ProfileGraphRoute.ProfileScreenRoute(
+            User(404, "Glenn", "abcde", "Мужчина")
+        ),
+        "Профиль",
+        Icons.Rounded.AccountCircle,
+        1267)
 }
-
 val items = listOf(
     BottomNavigationItem.Home,
     BottomNavigationItem.Wallet,
@@ -66,7 +85,12 @@ fun BottomNavigationBar(navController: NavController = rememberNavController())
     var selectedIcon by remember {
         mutableStateOf(0)
     }
+//    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+//    val selectedItemNumber = items.indexOfFirst {
+//        //it == currentBackStackEntry?.destination?.
+//    }
     NavigationBar (
+
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -84,9 +108,9 @@ fun BottomNavigationBar(navController: NavController = rememberNavController())
                         selectedIcon = i
                         navController.navigate(item.route)
                         {
-//                            popUpTo(navController.graph.findStartDestination().id)
-//                            launchSingleTop = true
-//                            restoreState = true
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(

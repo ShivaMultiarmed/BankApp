@@ -19,6 +19,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
@@ -40,6 +41,8 @@ import mikhail.shell.bank.app.ui.HomeScreen
 import mikhail.shell.bank.app.ui.ProfileScreen
 import mikhail.shell.bank.app.ui.SettingsScreen
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
+import mikhail.shell.bank.app.ui.theme.LocalSpacing
+import mikhail.shell.bank.app.ui.theme.spacing
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -76,25 +79,25 @@ class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerialize
 }
 
 @Serializable
-sealed class Route{
+sealed class Route {
     @Serializable
-    object HomeScreenRoute
+    data object HomeScreenRoute : Route()
     @Serializable
-    object ProfileGraphRoute {
+    data object ProfileGraphRoute : Route() {
         @Serializable
-        data class ProfileScreenRoute(val user: User)
+        data class ProfileScreenRoute(val user: User) : Route()
         @Serializable
-        object SettingsGraphRoute{
+        data object SettingsGraphRoute : Route() {
             @Serializable
-            object SettingsScreenRoute
+            data object SettingsScreenRoute : Route()
             @Serializable
-            object AdvancedSettingsRoute
+            data object AdvancedSettingsRoute : Route()
         }
     }
     @Serializable
-    object NotificationsScreenRoute
+    data object NotificationsScreenRoute : Route()
     @Serializable
-    object WalletScreenRoute
+    data object WalletScreenRoute : Route()
 }
 
 
@@ -177,7 +180,6 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
 }
 fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues)
 {
-
     navigation<Route.ProfileGraphRoute>(
         startDestination = Route.ProfileGraphRoute.ProfileScreenRoute::class
     )

@@ -12,5 +12,5 @@ data class ToggleableInfo(val title: String, var isChecked: Boolean)
 @Composable
 fun SectionsSpacer()
 {
-    Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+    Spacer(modifier = Modifier.fillMaxWidth().height(20.dp))
 }

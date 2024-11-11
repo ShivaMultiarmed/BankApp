@@ -60,17 +60,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.data.ToggleableInfo
 import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.ui.theme.spacing
 
 @Preview
 @Composable
-fun UserDataSection(user: User = User(0L,"default", "default", "default"))
+fun UserDataSection(
+    modifier: Modifier = Modifier,
+    user: User = User(
+        0L,
+        "default",
+        "default",
+        "default"
+    )
+)
 {
     Column(
-        modifier = Modifier
-            .padding(top = 40.dp)
-            .fillMaxWidth()
+        modifier = modifier
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium)
     ) {
         SwitchingTextEdit("Имя", user.name)
         SwitchingTextEdit("Пароль", user.password, true)
@@ -235,7 +242,9 @@ fun EditButton(
 }
 @Preview
 @Composable
-fun NotificationsChooserSection()
+fun NotificationsChooserSection(
+    modifier: Modifier = Modifier
+)
 {
     val options = remember {
         mutableStateListOf(
@@ -244,8 +253,7 @@ fun NotificationsChooserSection()
         )
     }
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.surface)
     ) {
