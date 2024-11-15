@@ -1,5 +1,7 @@
 package mikhail.shell.bank.app.ui
 
+import android.app.Activity
+import android.icu.text.CompactDecimalFormat.CompactStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -19,6 +21,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,10 +33,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -44,6 +51,8 @@ import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.Route
 import mikhail.shell.bank.app.User
 import mikhail.shell.bank.app.data.SectionsSpacer
+import mikhail.shell.bank.app.presentation.card.CardsViewModel
+import mikhail.shell.bank.app.ui.ScreenInfo.ScreenType.COMPACT
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
 import mikhail.shell.bank.app.ui.sections.home.CurrenciesSection
 import mikhail.shell.bank.app.ui.sections.home.FinanceSection
@@ -58,11 +67,15 @@ import mikhail.shell.bank.app.ui.theme.fontSize
 
 @Preview
 @Composable
-fun HomeScreen(navController: NavController = rememberNavController(), innerPadding: PaddingValues = PaddingValues(0.dp))
+fun HomeScreen(
+    navController: NavController = rememberNavController(),
+    cardsViewModel: CardsViewModel = hiltViewModel<CardsViewModel>(),
+    innerPadding: PaddingValues = PaddingValues(0.dp)
+)
 {
     val scrollState = rememberScrollState()
     Column (
-        modifier = Modifier
+        modifier = Modifier.Companion
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(innerPadding)
@@ -71,7 +84,7 @@ fun HomeScreen(navController: NavController = rememberNavController(), innerPadd
             .verticalScroll(scrollState)
     ) {
         WalletSection()
-        CardsSection()
+        CardsSection(cardsViewModel)
         FinanceSection()
         Spacer(
             modifier = Modifier
@@ -84,10 +97,13 @@ fun HomeScreen(navController: NavController = rememberNavController(), innerPadd
 }
 
 //@Preview
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(navController: NavController = rememberNavController(), user: User, innerPadding: PaddingValues = PaddingValues(0.dp))
 {
-    val windowInfo = rememberWindowInfo()
+    val windowInfo = calculateWindowSizeClass(activity = LocalContext.current as Activity)
+    //val windowInfo = rememberWindowState()
+    val screenInfo = rememberScreenSize()
     val scrollState = rememberScrollState()
     Column (
         modifier = Modifier
@@ -100,7 +116,9 @@ fun ProfileScreen(navController: NavController = rememberNavController(), user: 
             .verticalScroll(scrollState)
     )
     {
-        if (windowInfo.screenWidthType is WindowInfo.WindowType.Compact)
+        //if (windowInfo.screenWidthType is WindowInfo.WindowType.Compact)
+        //if (screenInfo.screenWidthType == COMPACT)
+        if (windowInfo.widthSizeClass == WindowWidthSizeClass.Compact)
         {
             AvatarSection(
                 modifier = Modifier
@@ -134,7 +152,8 @@ fun ProfileScreen(navController: NavController = rememberNavController(), user: 
             }
             SectionsSpacer()
         }
-        if (windowInfo.screenWidthType is WindowInfo.WindowType.Compact)
+        if (windowInfo.widthSizeClass == WindowWidthSizeClass.Compact)
+        //if (screenInfo.screenWidthType == COMPACT)
         {
             NotificationsChooserSection(
                 modifier = Modifier

@@ -20,6 +20,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,37 +35,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import mikhail.shell.bank.app.R
 import mikhail.shell.bank.app.data.Card
 import mikhail.shell.bank.app.data.CardSystem.MASTERCARD
 import mikhail.shell.bank.app.data.CardSystem.VISA
 import mikhail.shell.bank.app.data.CardType.PENSION
 import mikhail.shell.bank.app.data.CardType.SAVINGS
-
-val cardList = listOf(
-    Card(VISA, SAVINGS, "2930 9343 2933 4242", 90345.6),
-    Card(MASTERCARD, PENSION, "4534 3452 3453 1231", 20000.0)
-)
+import mikhail.shell.bank.app.presentation.card.CardsViewModel
 
 @Preview
 @Composable
-fun CardsSection()
+fun CardsSection(
+    cardsViewModel: CardsViewModel = hiltViewModel<CardsViewModel>()
+)
 {
-    LazyRow (
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        items(cardList) { card ->
-             CardComposable(card)
+    var cardList: List<Card> = remember { mutableStateListOf() }
+    var isLoaded by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = true) {
+        cardList = cardsViewModel.getCards()
+        isLoaded = true
+    }
+    if (isLoaded)
+    {
+        LazyRow (
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            items(cardList) { card ->
+                CardComposable(card)
+            }
         }
     }
+
 }
-@Preview
+//@Preview
 @Composable
-fun CardComposable(card: Card = cardList[0])
+fun CardComposable(card: Card)
 {
     val image = painterResource(
         when (card.system)

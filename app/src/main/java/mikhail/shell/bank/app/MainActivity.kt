@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -31,11 +32,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import mikhail.shell.bank.app.presentation.card.CardsViewModel
 import mikhail.shell.bank.app.ui.AdvancedSettingsScreen
 import mikhail.shell.bank.app.ui.HomeScreen
 import mikhail.shell.bank.app.ui.ProfileScreen
@@ -100,7 +103,7 @@ sealed class Route {
     data object WalletScreenRoute : Route()
 }
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +111,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             BankAppTheme {
                 Scaffold(
-                    modifier = Modifier
+                    modifier = Modifier.Companion
                         .fillMaxSize(),
                     topBar = {
                         TopBar()
@@ -175,7 +178,12 @@ class MainActivity : ComponentActivity() {
 fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: PaddingValues)
 {
     composable<Route.HomeScreenRoute> {
-        HomeScreen(navController, innerPadding)
+        val cardsViewModel = hiltViewModel<CardsViewModel>()
+        HomeScreen(
+            navController = navController,
+            cardsViewModel = cardsViewModel,
+            innerPadding = innerPadding
+        )
     }
 }
 fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues)
