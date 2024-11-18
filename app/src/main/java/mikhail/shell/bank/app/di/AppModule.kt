@@ -4,10 +4,15 @@ import android.app.Application
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import mikhail.shell.bank.app.data.remote.CardsApi
+import mikhail.shell.bank.app.data.remote.ProfileApi
 import mikhail.shell.bank.app.data.repository.CardsRepositoryImpl
+import mikhail.shell.bank.app.data.repository.ProfileRepositoryImpl
 import mikhail.shell.bank.app.domain.repository.CardsRepository
+import mikhail.shell.bank.app.domain.repository.ProfileRepository
+import mikhail.shell.bank.app.usecases.GetCards
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -20,20 +25,33 @@ object AppModule {
     fun provideHttpClient() = OkHttpClient()
     @Provides
     @Singleton
-    fun provideRetrofit(httpClient: OkHttpClient) = Retrofit.Builder()
+    fun provideRetrofit(
+        httpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
         .client(httpClient)
-        .baseUrl("http://some.ru")
+        .baseUrl("https://google.com")
         .build()
     @Provides
     @Singleton
-    fun provideCardsApi(retrofit: Retrofit) = retrofit.create(CardsApi::class.java)
+    fun provideCardsApi(
+        retrofit: Retrofit
+    ): CardsApi = retrofit.create(CardsApi::class.java)
+//    @Provides
+//    @Singleton
+//    fun providesCardsRepository(
+//        appContext: Application,
+//        cardsApi: CardsApi
+//    ): CardsRepository = CardsRepositoryImpl(
+//        appContext,
+//        cardsApi
+//    )
     @Provides
     @Singleton
-    fun providesCardsRepository(
-        appContext: Application,
-        cardsApi: CardsApi
-    ) : CardsRepository = CardsRepositoryImpl(
-        appContext,
-        cardsApi
-    )
+    fun providesProfileApi(retrofit: Retrofit) = retrofit.create(ProfileApi::class.java)
+//    @Provides
+//    @Singleton
+//    fun providesProfileRepository(profileApi: ProfileApi) = ProfileRepositoryImpl(profileApi) as ProfileRepository
+//    @Provides
+//    @Singleton
+//    fun providesGetCardsUseCase(cardsRepository: CardsRepository) = GetCards(cardsRepository)
 }

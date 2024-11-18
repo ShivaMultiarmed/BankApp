@@ -39,6 +39,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import mikhail.shell.bank.app.presentation.card.CardsViewModel
+import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.ui.AdvancedSettingsScreen
 import mikhail.shell.bank.app.ui.HomeScreen
 import mikhail.shell.bank.app.ui.ProfileScreen
@@ -192,12 +193,14 @@ fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: Padd
         startDestination = Route.ProfileGraphRoute.ProfileScreenRoute::class
     )
     {
+
         composable<Route.ProfileGraphRoute.ProfileScreenRoute>(
             typeMap = AppNavType.Companion.getMap(User.serializer())
         ) { navBackStackEntry ->
+            val profileViewModel = hiltViewModel<ProfileViewModel>()
             val args = navBackStackEntry.toRoute<Route.ProfileGraphRoute.ProfileScreenRoute>()
             val user = args.user
-            ProfileScreen(navController, user, innerPadding)
+            ProfileScreen(profileViewModel, navController, innerPadding)
         }
         goToSettings(navController, innerPadding)
     }

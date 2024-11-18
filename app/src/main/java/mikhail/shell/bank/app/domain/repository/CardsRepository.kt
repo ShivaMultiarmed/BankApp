@@ -1,7 +1,8 @@
 package mikhail.shell.bank.app.domain.repository
 
-import mikhail.shell.bank.app.data.Card
+import kotlinx.coroutines.flow.Flow
+import mikhail.shell.bank.app.domain.Card
 
 interface CardsRepository {
-    suspend fun getCards(): List<Card>
+    suspend fun getCards(userid: Long): Flow<List<Card>>
 }

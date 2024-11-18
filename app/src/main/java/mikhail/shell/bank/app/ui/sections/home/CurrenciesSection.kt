@@ -39,7 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import mikhail.shell.bank.app.data.Currency
+import mikhail.shell.bank.app.domain.Currency
 
 
 val currencies = listOf(

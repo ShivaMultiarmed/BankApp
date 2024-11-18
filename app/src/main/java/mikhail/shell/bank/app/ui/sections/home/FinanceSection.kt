@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import mikhail.shell.bank.app.data.FinanceTool
+import mikhail.shell.bank.app.domain.FinanceTool
 
 val financeTools = listOf(
     FinanceTool("Анализ расходов", Color(18, 99, 197, 255), Icons.Rounded.Analytics),

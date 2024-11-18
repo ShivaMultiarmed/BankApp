@@ -20,12 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,28 +29,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import mikhail.shell.bank.app.R
-import mikhail.shell.bank.app.data.Card
-import mikhail.shell.bank.app.data.CardSystem.MASTERCARD
-import mikhail.shell.bank.app.data.CardSystem.VISA
-import mikhail.shell.bank.app.data.CardType.PENSION
-import mikhail.shell.bank.app.data.CardType.SAVINGS
-import mikhail.shell.bank.app.presentation.card.CardsViewModel
+import mikhail.shell.bank.app.domain.Card
+import mikhail.shell.bank.app.domain.CardSystem.MASTERCARD
+import mikhail.shell.bank.app.domain.CardSystem.VISA
 
 @Preview
 @Composable
 fun CardsSection(
-    cardsViewModel: CardsViewModel = hiltViewModel<CardsViewModel>()
-)
-{
-    var cardList: List<Card> = remember { mutableStateListOf() }
-    var isLoaded by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = true) {
-        cardList = cardsViewModel.getCards()
-        isLoaded = true
-    }
-    if (isLoaded)
+    cardsList: List<Card> = emptyList()
+) {
+    if (cardsList.isNotEmpty())
     {
         LazyRow (
             modifier = Modifier
@@ -65,7 +48,7 @@ fun CardsSection(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            items(cardList) { card ->
+            items(cardsList) { card ->
                 CardComposable(card)
             }
         }

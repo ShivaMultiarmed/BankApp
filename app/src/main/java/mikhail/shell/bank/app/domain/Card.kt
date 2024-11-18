@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.data
+package mikhail.shell.bank.app.domain
 
 data class Card(
     val system: CardSystem,
