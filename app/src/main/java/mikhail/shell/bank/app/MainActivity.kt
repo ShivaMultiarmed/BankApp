@@ -94,7 +94,7 @@ sealed class Route {
         }
     }
     @Serializable
-    data object NotificationsScreenRoute : Route()
+    data object TransactionsScreenRoute : Route()
     @Serializable
     data object WalletScreenRoute : Route()
 }

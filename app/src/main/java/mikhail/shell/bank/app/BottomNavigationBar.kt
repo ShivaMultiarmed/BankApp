@@ -2,14 +2,13 @@ package mikhail.shell.bank.app
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Autorenew
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -17,7 +16,6 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
@@ -35,18 +33,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import mikhail.shell.bank.app.ui.theme.spacing
-import kotlin.reflect.KClass
 
 sealed class BottomNavigationItem<T : Route>(
     val route: T,
     val title: String,
     val icon: ImageVector,
     var count: Int = 0
-)
-{
+) {
     data object Home : BottomNavigationItem<Route>(
         Route.HomeScreenRoute,
         "Главная",
@@ -57,9 +51,9 @@ sealed class BottomNavigationItem<T : Route>(
         Icons.Rounded.ShoppingCart
     )
     data object Notifications: BottomNavigationItem<Route>(
-        Route.NotificationsScreenRoute,
-        "Уведомления",
-        Icons.Rounded.Notifications,
+        Route.TransactionsScreenRoute,
+        "Переводы",
+        Icons.Rounded.Autorenew,
         4546
     )
     data object Profile: BottomNavigationItem<Route>(
