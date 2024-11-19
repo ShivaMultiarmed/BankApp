@@ -40,18 +40,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.domain.Currency
+import mikhail.shell.bank.app.domain.usecases.GetCurrencies
 
 
-val currencies = listOf(
-    Currency("USD", Icons.Rounded.CurrencyExchange, 90.0, 92.0),
-    Currency("YEN", Icons.Rounded.CurrencyYen, 50.0, 54.0),
-    Currency("GBP", Icons.Rounded.CurrencyPound, 105.0, 107.0),
-)
-
-@Preview
 @Composable
-fun CurrenciesSection()
-{
+fun CurrenciesSection(
+    currencies: List<Currency>
+) {
     var isVisible by remember {
         mutableStateOf(true)
     }
@@ -134,9 +129,8 @@ fun CurrenciesSection()
     }
 
 }
-@Preview
 @Composable
-fun CurrencyRow(currency: Currency = currencies[0])
+fun CurrencyRow(currency: Currency)
 {
     val colWidth = 60.dp
     val fontSize = 14.sp

@@ -7,13 +7,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import mikhail.shell.bank.app.data.remote.CardsApi
+import mikhail.shell.bank.app.data.remote.CurrenciesApi
 import mikhail.shell.bank.app.data.remote.ProfileApi
 import mikhail.shell.bank.app.data.remote.ServiceApi
 import mikhail.shell.bank.app.data.repository.CardsRepositoryImpl
 import mikhail.shell.bank.app.data.repository.ProfileRepositoryImpl
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
-import mikhail.shell.bank.app.usecases.GetCards
+import mikhail.shell.bank.app.domain.usecases.GetCards
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.create
@@ -61,4 +62,7 @@ object AppModule {
     @Provides
     @Singleton
     fun providesServicesApi(retrofit: Retrofit) = retrofit.create<ServiceApi>()
+    @Provides
+    @Singleton
+    fun providesCurrenciesApi(retrofit: Retrofit) = retrofit.create<CurrenciesApi>()
 }
