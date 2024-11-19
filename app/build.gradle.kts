@@ -18,7 +18,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "mikhail.shell.bank.app.BankAppTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -82,9 +82,11 @@ dependencies {
     //Dagger - Hilt
     implementation (libs.hilt.android)
     kapt (libs.hilt.android.compiler)
+    kaptAndroidTest (libs.hilt.android.compiler)
     //implementation (libs.androidx.hilt.lifecycle.viewmodel)
     kapt (libs.androidx.hilt.compiler)
     implementation (libs.androidx.hilt.navigation.compose)
+    androidTestImplementation(libs.hilt.android.testing)
 
     // Retrofit
     implementation (libs.retrofit)
