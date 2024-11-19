@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.usecases
+package mikhail.shell.bank.app.domain.usecases
 
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import javax.inject.Inject
