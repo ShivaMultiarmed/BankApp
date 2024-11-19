@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Autorenew
 import androidx.compose.material.icons.rounded.Home
@@ -48,7 +49,7 @@ sealed class BottomNavigationItem<T : Route>(
     data object Wallet: BottomNavigationItem<Route>(
         Route.WalletScreenRoute,
         "Кошелек",
-        Icons.Rounded.ShoppingCart
+        Icons.Rounded.AccountBalanceWallet
     )
     data object Notifications: BottomNavigationItem<Route>(
         Route.TransactionsScreenRoute,
