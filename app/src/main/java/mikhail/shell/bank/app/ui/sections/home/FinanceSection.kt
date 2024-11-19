@@ -31,16 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.domain.FinanceTool
 
-val financeTools = listOf(
-    FinanceTool("Анализ расходов", Color(18, 99, 197, 255), Icons.Rounded.Analytics),
-    FinanceTool("Инвестиции", Color(122, 197, 18, 255), Icons.Rounded.Cases),
-    FinanceTool("Новости", Color(81, 18, 197, 255), Icons.Rounded.Newspaper),
-    FinanceTool("Кэшбэк", Color(81, 18, 197, 255), Icons.Rounded.Backspace)
-)
 
-@Preview
+
+//@Preview
 @Composable
-fun FinanceSection()
+fun FinanceSection(
+    financeTools: List<FinanceTool>
+)
 {
     LazyRow(
         modifier = Modifier
@@ -55,9 +52,9 @@ fun FinanceSection()
         }
     }
 }
-@Preview
+//@Preview
 @Composable
-fun FinanceToolComposable(tool: FinanceTool = financeTools[0])
+fun FinanceToolComposable(tool: FinanceTool)
 {
     Box(
         modifier = Modifier

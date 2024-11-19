@@ -9,6 +9,7 @@ import javax.inject.Inject
 class ProfileRepositoryImpl @Inject constructor (
     private val profileApi: ProfileApi
 ) : ProfileRepository {
+    //@Inject lateinit var profileApi: ProfileApi
     override suspend fun fetchProfile(userid: Long) : User {
         delay(3000)
         return User(505L, "Jordan", "hello", "Мужской")

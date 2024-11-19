@@ -8,6 +8,7 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import mikhail.shell.bank.app.data.remote.CardsApi
 import mikhail.shell.bank.app.data.remote.ProfileApi
+import mikhail.shell.bank.app.data.remote.ServiceApi
 import mikhail.shell.bank.app.data.repository.CardsRepositoryImpl
 import mikhail.shell.bank.app.data.repository.ProfileRepositoryImpl
 import mikhail.shell.bank.app.domain.repository.CardsRepository
@@ -15,6 +16,7 @@ import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import mikhail.shell.bank.app.usecases.GetCards
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -36,22 +38,27 @@ object AppModule {
     fun provideCardsApi(
         retrofit: Retrofit
     ): CardsApi = retrofit.create(CardsApi::class.java)
-//    @Provides
-//    @Singleton
-//    fun providesCardsRepository(
-//        appContext: Application,
-//        cardsApi: CardsApi
-//    ): CardsRepository = CardsRepositoryImpl(
-//        appContext,
-//        cardsApi
-//    )
+    @Provides
+    @Singleton
+    fun providesCardsRepository(
+        appContext: Application,
+        cardsApi: CardsApi
+    ): CardsRepository = CardsRepositoryImpl(
+        appContext,
+        cardsApi
+    )
     @Provides
     @Singleton
     fun providesProfileApi(retrofit: Retrofit) = retrofit.create(ProfileApi::class.java)
 //    @Provides
 //    @Singleton
 //    fun providesProfileRepository(profileApi: ProfileApi) = ProfileRepositoryImpl(profileApi) as ProfileRepository
+    // fun providesProfileRepository() = ProfileRepositoryImpl() as ProfileRepository
 //    @Provides
 //    @Singleton
 //    fun providesGetCardsUseCase(cardsRepository: CardsRepository) = GetCards(cardsRepository)
+//    fun providesGetCardsUseCase() = GetCards()
+    @Provides
+    @Singleton
+    fun providesServicesApi(retrofit: Retrofit) = retrofit.create<ServiceApi>()
 }

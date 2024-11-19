@@ -2,7 +2,6 @@ package mikhail.shell.bank.app.ui
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,10 +28,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,13 +46,15 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.Route
 import mikhail.shell.bank.app.User
 import mikhail.shell.bank.app.domain.Card
+import mikhail.shell.bank.app.domain.FinanceTool
 import mikhail.shell.bank.app.domain.SectionsSpacer
-import mikhail.shell.bank.app.presentation.card.CardsViewModel
+import mikhail.shell.bank.app.presentation.home.HomeViewModel
 import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
 import mikhail.shell.bank.app.ui.sections.home.CurrenciesSection
@@ -72,7 +71,7 @@ import mikhail.shell.bank.app.ui.sections.profile.UserDataSection
 @Composable
 fun HomeScreen(
     navController: NavController = rememberNavController(),
-    cardsViewModel: CardsViewModel = hiltViewModel<CardsViewModel>(),
+    homeViewModel: HomeViewModel = hiltViewModel<HomeViewModel>(),
     innerPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val sharedPreferences =
@@ -85,26 +84,28 @@ fun HomeScreen(
         }
     val userid = sharedPreferences.getLong("userid", 0)
     val scrollState = rememberScrollState()
-    val snapshotSaver = Saver<SnapshotStateList<Card>, List<Card>>(
-        save = {
-            it.toList()
-        }, restore = {
-            val snapshotStateList = SnapshotStateList<Card>()
-            snapshotStateList.addAll(it)
-            snapshotStateList
-        }
-    )
-    var cardsList = remember {
-        SnapshotStateList<Card>()
-    }
+
+    val cardsList = remember { mutableStateListOf<Card>() }
+    val toolsList = remember { mutableStateListOf<FinanceTool>() }
     LaunchedEffect(true) {
         if (cardsList.isNotEmpty())
             cardsList.clear()
-        val cardsFlow: Flow<List<Card>> = cardsViewModel.getCards(userid)
-        cardsFlow.collect { cards ->
-            cardsList.addAll(cards)
+        if (toolsList.isNotEmpty())
+            toolsList.clear()
+        launch (Dispatchers.IO) {
+            val cardsFlow: Flow<List<Card>> = homeViewModel.getCards(userid)
+            cardsFlow.collect { cards ->
+                cardsList.addAll(cards)
+            }
+        }
+        launch (Dispatchers.IO) {
+            val servicesFlow = homeViewModel.getServices(userid)
+            servicesFlow.collect { services ->
+                toolsList.addAll(services)
+            }
         }
     }
+
     Column (
         modifier = Modifier.Companion
             .fillMaxSize()
@@ -116,7 +117,7 @@ fun HomeScreen(
     ) {
         WalletSection()
         CardsSection(cardsList)
-        FinanceSection()
+        FinanceSection(toolsList)
         Spacer(
             modifier = Modifier
                 .weight(1f)
@@ -146,7 +147,9 @@ fun ProfileScreen(
         }
     val userid = sharedPreferences.getLong("userid", 0)
     LaunchedEffect(true) {
-        user = profileViewModel.getProfile(userid)
+        launch (Dispatchers.IO) {
+            user = profileViewModel.getProfile(userid)
+        }
     }
     val windowInfo = calculateWindowSizeClass(activity = LocalContext.current as Activity)
     //val windowInfo = rememberWindowState()
@@ -322,3 +325,30 @@ fun AdvancedSettingsScreen(navController: NavController = rememberNavController(
         Text(text = "Дополнительные настройки", color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)
     }
 }
+//fun getCardSaver(): Saver<List<Card>, List<Map<String, Any>>>
+//{
+//    val cardSaver = Saver<Card, Map<String, Any>>(
+//        save = {
+//            mapOf(
+//                "system" to it.system.name,
+//                "type" to it.type.name,
+//                "number" to it.number,
+//                "balance" to it.balance
+//            )
+//        },
+//        restore = {
+//            Card(
+//                system = CardSystem.valueOf(it["system"] as String),
+//                type = CardType.valueOf(it["type"] as String),
+//                number = it["number"] as String,
+//                balance = it["balance"] as Double
+//            )
+//        }
+//    )
+//
+//    val cardListSaver = Saver<List<Card>, List<Map<String, Any>>>(
+//        save = { list -> list.map { cardSaver.save(it) } },
+//        restore = { list -> list.map { cardSaver.restore(it) } }
+//    )
+//    return cardListSaver
+//}

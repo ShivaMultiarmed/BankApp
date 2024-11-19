@@ -19,7 +19,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
@@ -36,18 +35,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import mikhail.shell.bank.app.presentation.card.CardsViewModel
+import mikhail.shell.bank.app.presentation.home.HomeViewModel
 import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.ui.AdvancedSettingsScreen
 import mikhail.shell.bank.app.ui.HomeScreen
 import mikhail.shell.bank.app.ui.ProfileScreen
 import mikhail.shell.bank.app.ui.SettingsScreen
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
-import mikhail.shell.bank.app.ui.theme.LocalSpacing
-import mikhail.shell.bank.app.ui.theme.spacing
-import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -179,10 +174,10 @@ class MainActivity : ComponentActivity() {
 fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: PaddingValues)
 {
     composable<Route.HomeScreenRoute> {
-        val cardsViewModel = hiltViewModel<CardsViewModel>()
+        val homeViewModel = hiltViewModel<HomeViewModel>()
         HomeScreen(
             navController = navController,
-            cardsViewModel = cardsViewModel,
+            homeViewModel = homeViewModel,
             innerPadding = innerPadding
         )
     }

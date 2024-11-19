@@ -4,10 +4,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import mikhail.shell.bank.app.data.repository.CardsRepositoryImpl
 import mikhail.shell.bank.app.data.repository.ProfileRepositoryImpl
-import mikhail.shell.bank.app.domain.repository.CardsRepository
+import mikhail.shell.bank.app.data.repository.ServiceRepositoryImpl
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
+import mikhail.shell.bank.app.domain.repository.ServiceRepository
 import javax.inject.Singleton
 
 @Module
@@ -18,8 +18,8 @@ abstract class AnotherModule {
     abstract fun bindProfileRepository(repositoryImpl: ProfileRepositoryImpl) : ProfileRepository
 //    @Binds
 //    @Singleton
-//    abstract fun bindGetCardsUseCase(useCase: GetCards): GetCards
+//    abstract fun bindCardsRepository(repositoryImpl: CardsRepositoryImpl): CardsRepository
     @Binds
     @Singleton
-    abstract fun bindCardsRepository(repositoryImpl: CardsRepositoryImpl): CardsRepository
+    abstract fun bindServiceRepository(repositoryImpl: ServiceRepositoryImpl): ServiceRepository
 }
