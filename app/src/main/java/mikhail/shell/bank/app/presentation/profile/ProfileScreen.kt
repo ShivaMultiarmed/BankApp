@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.ui
+package mikhail.shell.bank.app.presentation.profile
 
 import android.app.Activity
 import android.content.Context
@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -24,9 +22,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -47,58 +42,17 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.Route
 import mikhail.shell.bank.app.User
-import mikhail.shell.bank.app.domain.models.Card
-import mikhail.shell.bank.app.domain.models.Currency
-import mikhail.shell.bank.app.domain.models.FinanceTool
 import mikhail.shell.bank.app.domain.models.SectionsSpacer
-import mikhail.shell.bank.app.presentation.home.HomeViewModel
-import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
-import mikhail.shell.bank.app.ui.sections.home.CardsSection
-import mikhail.shell.bank.app.ui.sections.home.CurrenciesSection
-import mikhail.shell.bank.app.ui.sections.home.FinanceSection
-import mikhail.shell.bank.app.ui.sections.home.WalletSection
-import mikhail.shell.bank.app.ui.sections.profile.AvatarSection
-import mikhail.shell.bank.app.ui.sections.profile.LanguageChooserSection
-import mikhail.shell.bank.app.ui.sections.profile.NotificationsChooserSection
-import mikhail.shell.bank.app.ui.sections.profile.SettingsSection
-import mikhail.shell.bank.app.ui.sections.profile.SyncSwitchSection
-import mikhail.shell.bank.app.ui.sections.profile.UserDataSection
-
-@Composable
-fun HomeScreen(
-    navController: NavController = rememberNavController(),
-    cards: List<Card> = listOf(),
-    tools: List<FinanceTool> = listOf(),
-    currencies: List<Currency> = listOf(),
-    innerPadding: PaddingValues = PaddingValues(0.dp)
-) {
-
-    val scrollState = rememberScrollState()
-    Column (
-        modifier = Modifier.Companion
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(innerPadding)
-            .padding(top = 16.dp)
-            .padding(horizontal = 16.dp)
-            .verticalScroll(scrollState)
-    ) {
-        WalletSection()
-        CardsSection(cards)
-        FinanceSection(tools)
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-                .height(0.dp)
-                .fillMaxWidth()
-        )
-        CurrenciesSection(currencies)
-    }
-}
+import mikhail.shell.bank.app.presentation.profile.sections.AvatarSection
+import mikhail.shell.bank.app.presentation.profile.sections.LanguageChooserSection
+import mikhail.shell.bank.app.presentation.profile.sections.NotificationsChooserSection
+import mikhail.shell.bank.app.presentation.profile.sections.SettingsSection
+import mikhail.shell.bank.app.presentation.profile.sections.SyncSwitchSection
+import mikhail.shell.bank.app.presentation.profile.sections.UserDataSection
+import mikhail.shell.bank.app.ui.rememberScreenSize
 
 //@Preview
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -106,7 +60,8 @@ fun HomeScreen(
 fun ProfileScreen(
     profileViewModel: ProfileViewModel,
     navController: NavController = rememberNavController(),
-    innerPadding: PaddingValues = PaddingValues(0.dp))
+    innerPadding: PaddingValues = PaddingValues(0.dp)
+)
 {
     var user: User? by rememberSaveable { mutableStateOf(null) }
     val sharedPreferences =
@@ -211,92 +166,8 @@ fun ProfileScreen(
     }
 
 }
-@Preview
-@Composable
-fun SettingsScreen(navController: NavController = rememberNavController())
-{
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Button(onClick = { navController.navigate(Route.ProfileGraphRoute.SettingsGraphRoute.AdvancedSettingsRoute) }) {
-            Text("Дополнительно")
-        }
-        Text(text = "Базовые настройки", color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)
-    }
-}
-@OptIn(ExperimentalPermissionsApi::class)
-@Preview
-@Composable
-fun AdvancedSettingsScreen(navController: NavController = rememberNavController()) {
-    val scope = rememberCoroutineScope()
-    val permissionState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            "android.permission.CAMERA",
-            "android.permission.RECORD_AUDIO"
-        )
-    )
-    //var permissionResult by remember { mutableStateOf(false) }
-    val internetPermissionState = rememberPermissionState(android.Manifest.permission.INTERNET)
-//    {
-//        permissionResult = it
-//    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        permissionState.permissions.forEach { permission ->
-            when (permission.permission) {
-                "android.permission.CAMERA" -> {
-//                    scope.launch {
-//                        permission.launchPermissionRequest()
-//                    }
-                    if (permission.status.isGranted) {
-                        Text("Вы разрешили приложению пользоваться камерой.")
-                    } else if(permission.status.shouldShowRationale) {
-                        scope.launch {
-                            permissionState.launchMultiplePermissionRequest()
-                        }
-                        Text("Вы временно запретили приложению пользоваться камерой.")
-                    } else {
-                        Text("Вы навсегда запретили приложению пользоваться камерой.")
-                    }
-                }
-                "android.permission.RECORD_AUDIO" -> {
-                    if (permission.status.isGranted) {
-                        Text("Вы разрешили приложению записывать звук.")
-                    }else{
-                        scope.launch {
-                            //permissionState.launchMultiplePermissionRequest()
-                        }
-                        Text("Вы запретили приложению записывать звук.")
-                    }
-                }
-            }
-        }
-        if (internetPermissionState.status.isGranted)
-        {
-            Text("Вы разрешили использовать интернет")
-        }
-        else if (internetPermissionState.status.shouldShowRationale) {
-            internetPermissionState.launchPermissionRequest()
-            Text("Вы временно запретили использовать интернет")
-        } else  {
-            Text("Вы навсегда запретили использовать интернет")
-        }
-        Button(onClick = { navController.navigateUp() }) {
-            Text("Назад")
-        }
-        Text(text = "Дополнительные настройки", color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)
-    }
-}
+
 //fun getCardSaver(): Saver<List<Card>, List<Map<String, Any>>>
 //{
 //    val cardSaver = Saver<Card, Map<String, Any>>(

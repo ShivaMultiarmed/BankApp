@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.ui.sections.home
+package mikhail.shell.bank.app.presentation.home.sections
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.domain.models.Currency
+import mikhail.shell.bank.app.presentation.components.CurrencyRow
 
 
 @Composable
@@ -123,32 +124,4 @@ fun CurrenciesSection(
         }
     }
 
-}
-@Composable
-fun CurrencyRow(currency: Currency)
-{
-    val colWidth = 60.dp
-    val fontSize = 14.sp
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
-    )
-    {
-        Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
-        {
-            Text(text = currency.name, fontSize = fontSize)
-        }
-        Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
-        {
-            Text(text = "${currency.buy} ₽", fontSize = fontSize)
-        }
-        Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
-        {
-            Text(text = "${currency.sell} ₽", fontSize = fontSize)
-        }
-    }
 }

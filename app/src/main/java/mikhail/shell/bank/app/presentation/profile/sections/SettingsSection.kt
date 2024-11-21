@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.ui.sections.profile
+package mikhail.shell.bank.app.presentation.profile.sections
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

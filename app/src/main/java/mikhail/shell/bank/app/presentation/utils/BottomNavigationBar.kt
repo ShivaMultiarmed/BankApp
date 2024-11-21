@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app
+package mikhail.shell.bank.app.presentation.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -11,8 +11,6 @@ import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Autorenew
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Notifications
-import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+import mikhail.shell.bank.app.Route
+import mikhail.shell.bank.app.User
 
 sealed class BottomNavigationItem<T : Route>(
     val route: T,

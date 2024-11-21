@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.ui.sections.home
+package mikhail.shell.bank.app.presentation.home.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.domain.models.FinanceTool
-
+import mikhail.shell.bank.app.presentation.components.FinanceToolComposable
 
 
 //@Preview
@@ -43,40 +43,6 @@ fun FinanceSection(
     {
         items(financeTools) { tool ->
             FinanceToolComposable(tool)
-        }
-    }
-}
-//@Preview
-@Composable
-fun FinanceToolComposable(tool: FinanceTool)
-{
-    Box(
-        modifier = Modifier
-            .padding(end = 18.dp)
-            .width(110.dp)
-            .height(110.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
-            .padding(10.dp)
-    ) {
-        Column (
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ){
-            Icon(
-                modifier = Modifier
-                    .width(40.dp)
-                    .height(40.dp)
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(tool.color)
-                    .padding(4.dp),
-                imageVector = tool.imageVector,
-                contentDescription = tool.name,
-                tint = Color.White
-            )
-            Text(text = tool.name, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, lineHeight = 16.sp)
         }
     }
 }
