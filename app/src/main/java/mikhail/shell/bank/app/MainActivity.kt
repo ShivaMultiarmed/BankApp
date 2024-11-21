@@ -1,5 +1,6 @@
 package mikhail.shell.bank.app
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -20,8 +21,17 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -33,9 +43,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.presentation.home.HomeViewModel
 import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.ui.AdvancedSettingsScreen
@@ -174,14 +187,33 @@ class MainActivity : ComponentActivity() {
 fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: PaddingValues)
 {
     composable<Route.HomeScreenRoute> {
-        val homeViewModel = hiltViewModel<HomeViewModel>()
+        val userid = LocalContext.current.getUserId()
+        val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
+            factory.create(userid)
+        }
+        val cards by homeViewModel.cards.collectAsState()
+        val currencies by homeViewModel.currencies.collectAsState()
+        val tools by homeViewModel.tools.collectAsState()
         HomeScreen(
             navController = navController,
-            homeViewModel = homeViewModel,
+            cards = cards,
+            currencies = currencies,
+            tools = tools,
             innerPadding = innerPadding
         )
     }
 }
+fun Context.getUserId(): Long {
+    val sharedPreferences =
+        getSharedPreferences("auth_details", Context.MODE_PRIVATE)
+    if (!sharedPreferences.contains("userid"))
+        sharedPreferences.edit {
+            putLong("userid", 505L)
+            apply()
+        }
+    return sharedPreferences.getLong("userid", 0)
+}
+
 fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues)
 {
     navigation<Route.ProfileGraphRoute>(

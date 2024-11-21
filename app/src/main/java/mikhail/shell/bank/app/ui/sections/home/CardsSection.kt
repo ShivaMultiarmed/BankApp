@@ -30,9 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.R
-import mikhail.shell.bank.app.domain.Card
-import mikhail.shell.bank.app.domain.CardSystem.MASTERCARD
-import mikhail.shell.bank.app.domain.CardSystem.VISA
+import mikhail.shell.bank.app.domain.models.Card
+import mikhail.shell.bank.app.domain.models.CardSystem.MASTERCARD
+import mikhail.shell.bank.app.domain.models.CardSystem.VISA
 
 @Preview
 @Composable

@@ -51,7 +51,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import mikhail.shell.bank.app.domain.ToggleableInfo
+import mikhail.shell.bank.app.domain.models.ToggleableInfo
 import mikhail.shell.bank.app.User
 import mikhail.shell.bank.app.ui.theme.spacing
 

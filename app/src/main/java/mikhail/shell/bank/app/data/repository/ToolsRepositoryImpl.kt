@@ -8,17 +8,16 @@ import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flow
 import mikhail.shell.bank.app.data.remote.ServiceApi
-import mikhail.shell.bank.app.domain.FinanceTool
-import mikhail.shell.bank.app.domain.repository.ServiceRepository
+import mikhail.shell.bank.app.domain.models.FinanceTool
+import mikhail.shell.bank.app.domain.repository.ToolsRepository
 import javax.inject.Inject
 
-class ServiceRepositoryImpl @Inject constructor(
+class ToolsRepositoryImpl @Inject constructor(
     private val serviceApi: ServiceApi
-) : ServiceRepository {
-    override suspend fun getRecommendedServices(userid: Long): Flow<List<FinanceTool>> {
+) : ToolsRepository {
+    override suspend fun getRecommendedTools(userid: Long): Flow<List<FinanceTool>> {
         delay(1000)
         val toolsList = listOf(
             FinanceTool("Анализ расходов", Color(18, 99, 197, 255), Icons.Rounded.Analytics),

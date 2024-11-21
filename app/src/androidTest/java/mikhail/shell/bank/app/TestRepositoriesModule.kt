@@ -1,14 +1,10 @@
 package mikhail.shell.bank.app
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Analytics
-import androidx.compose.material.icons.rounded.Backspace
-import androidx.compose.material.icons.rounded.Cases
 import androidx.compose.material.icons.rounded.CurrencyExchange
 import androidx.compose.material.icons.rounded.CurrencyPound
 import androidx.compose.material.icons.rounded.CurrencyYen
-import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.ui.graphics.Color
 import dagger.Module
 import dagger.Provides
@@ -17,20 +13,19 @@ import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
 import mikhail.shell.bank.app.data.remote.CardsApi
 import mikhail.shell.bank.app.data.remote.ProfileApi
 import mikhail.shell.bank.app.data.remote.ServiceApi
 import mikhail.shell.bank.app.di.RepositoriesModule
-import mikhail.shell.bank.app.domain.Card
-import mikhail.shell.bank.app.domain.CardSystem
-import mikhail.shell.bank.app.domain.CardType
-import mikhail.shell.bank.app.domain.Currency
-import mikhail.shell.bank.app.domain.FinanceTool
+import mikhail.shell.bank.app.domain.models.Card
+import mikhail.shell.bank.app.domain.models.CardSystem
+import mikhail.shell.bank.app.domain.models.CardType
+import mikhail.shell.bank.app.domain.models.Currency
+import mikhail.shell.bank.app.domain.models.FinanceTool
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import mikhail.shell.bank.app.domain.repository.CurrenciesRepository
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
-import mikhail.shell.bank.app.domain.repository.ServiceRepository
+import mikhail.shell.bank.app.domain.repository.ToolsRepository
 import javax.inject.Singleton
 
 @Module
@@ -60,8 +55,8 @@ object TestRepositoriesModule {
     }
     @Provides
     @Singleton
-    fun providesServicesRepository(serviceApi: ServiceApi) = object : ServiceRepository {
-        override suspend fun getRecommendedServices(userid: Long): Flow<List<FinanceTool>> {
+    fun providesServicesRepository(serviceApi: ServiceApi) = object : ToolsRepository {
+        override suspend fun getRecommendedTools(userid: Long): Flow<List<FinanceTool>> {
             delay(1000)
             val toolsList = listOf(
                 FinanceTool("Анализ расходов", Color(18, 99, 197, 255), Icons.Rounded.Analytics)

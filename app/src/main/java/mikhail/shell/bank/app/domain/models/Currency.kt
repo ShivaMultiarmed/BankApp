@@ -1,4 +1,4 @@
-package mikhail.shell.bank.app.domain
+package mikhail.shell.bank.app.domain.models
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

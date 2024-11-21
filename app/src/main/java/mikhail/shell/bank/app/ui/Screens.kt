@@ -47,15 +47,14 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.Route
 import mikhail.shell.bank.app.User
-import mikhail.shell.bank.app.domain.Card
-import mikhail.shell.bank.app.domain.Currency
-import mikhail.shell.bank.app.domain.FinanceTool
-import mikhail.shell.bank.app.domain.SectionsSpacer
+import mikhail.shell.bank.app.domain.models.Card
+import mikhail.shell.bank.app.domain.models.Currency
+import mikhail.shell.bank.app.domain.models.FinanceTool
+import mikhail.shell.bank.app.domain.models.SectionsSpacer
 import mikhail.shell.bank.app.presentation.home.HomeViewModel
 import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.ui.sections.home.CardsSection
@@ -69,57 +68,16 @@ import mikhail.shell.bank.app.ui.sections.profile.SettingsSection
 import mikhail.shell.bank.app.ui.sections.profile.SyncSwitchSection
 import mikhail.shell.bank.app.ui.sections.profile.UserDataSection
 
-@Preview
 @Composable
 fun HomeScreen(
     navController: NavController = rememberNavController(),
-    homeViewModel: HomeViewModel = hiltViewModel<HomeViewModel>(),
+    cards: List<Card> = listOf(),
+    tools: List<FinanceTool> = listOf(),
+    currencies: List<Currency> = listOf(),
     innerPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val sharedPreferences =
-        LocalContext.current.getSharedPreferences("auth_details", Context.MODE_PRIVATE)
-    if (!sharedPreferences.contains("userid"))
-//        sharedPreferences.edit().putLong("userid", 505L).apply()
-        sharedPreferences.edit {
-            putLong("userid", 505L)
-            apply()
-        }
-    val userid = sharedPreferences.getLong("userid", 0)
+
     val scrollState = rememberScrollState()
-
-    val cardsList = remember { mutableStateListOf<Card>() }
-    val toolsList = remember { mutableStateListOf<FinanceTool>() }
-    val currenciesList = remember { mutableStateListOf<Currency>() }
-    LaunchedEffect(true) {
-        if (cardsList.isNotEmpty())
-            cardsList.clear()
-        if (toolsList.isNotEmpty())
-            toolsList.clear()
-        if (currenciesList.isNotEmpty())
-            currenciesList.clear()
-
-
-        launch (Dispatchers.IO) {
-            val cardsFlow: Flow<List<Card>> = homeViewModel.getCards(userid)
-            cardsFlow.collect { cards ->
-                cardsList.addAll(cards)
-            }
-        }
-
-        launch (Dispatchers.IO) {
-            val servicesFlow = homeViewModel.getServices(userid)
-            servicesFlow.collect { services ->
-                toolsList.addAll(services)
-            }
-        }
-        launch (Dispatchers.IO) {
-            val currenciesFlow = homeViewModel.getCurrencies()
-            currenciesFlow.collect { currencies ->
-                currenciesList.addAll(currencies)
-            }
-        }
-    }
-
     Column (
         modifier = Modifier.Companion
             .fillMaxSize()
@@ -130,15 +88,15 @@ fun HomeScreen(
             .verticalScroll(scrollState)
     ) {
         WalletSection()
-        CardsSection(cardsList)
-        FinanceSection(toolsList)
+        CardsSection(cards)
+        FinanceSection(tools)
         Spacer(
             modifier = Modifier
                 .weight(1f)
                 .height(0.dp)
                 .fillMaxWidth()
         )
-        CurrenciesSection(currenciesList)
+        CurrenciesSection(currencies)
     }
 }
 

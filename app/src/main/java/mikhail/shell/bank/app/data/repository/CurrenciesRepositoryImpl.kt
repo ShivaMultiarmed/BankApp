@@ -8,7 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import mikhail.shell.bank.app.data.remote.CurrenciesApi
-import mikhail.shell.bank.app.domain.Currency
+import mikhail.shell.bank.app.domain.models.Currency
 import mikhail.shell.bank.app.domain.repository.CurrenciesRepository
 import javax.inject.Inject
 
