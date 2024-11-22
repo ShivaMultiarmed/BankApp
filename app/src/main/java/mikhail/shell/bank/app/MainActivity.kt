@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -91,7 +92,7 @@ sealed class Route {
     @Serializable
     data object ProfileGraphRoute : Route() {
         @Serializable
-        data class ProfileScreenRoute(val user: User) : Route()
+        data class ProfileScreenRoute(val userid: Long) : Route()
         @Serializable
         data object SettingsGraphRoute : Route() {
             @Serializable
@@ -185,9 +186,9 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
         val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
             factory.create(userid)
         }
-        val cards by homeViewModel.cards.collectAsState()
-        val currencies by homeViewModel.currencies.collectAsState()
-        val tools by homeViewModel.tools.collectAsState()
+        val cards by homeViewModel.cards.collectAsStateWithLifecycle()
+        val currencies by homeViewModel.currencies.collectAsStateWithLifecycle()
+        val tools by homeViewModel.tools.collectAsStateWithLifecycle()
         HomeScreen(
             navController = navController,
             cards = cards,
@@ -214,14 +215,17 @@ fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: Padd
         startDestination = Route.ProfileGraphRoute.ProfileScreenRoute::class
     )
     {
-
         composable<Route.ProfileGraphRoute.ProfileScreenRoute>(
             typeMap = AppNavType.Companion.getMap(User.serializer())
         ) { navBackStackEntry ->
-            val profileViewModel = hiltViewModel<ProfileViewModel>()
             val args = navBackStackEntry.toRoute<Route.ProfileGraphRoute.ProfileScreenRoute>()
-            val user = args.user
-            ProfileScreen(profileViewModel, navController, innerPadding)
+            val profileViewModel = hiltViewModel<ProfileViewModel, ProfileViewModel.Factory> { factory ->
+                factory.create(args.userid)
+            }
+            val user by profileViewModel.profile.collectAsStateWithLifecycle()
+            if (user != null) {
+                ProfileScreen(navController, user!!, innerPadding)
+            }
         }
         goToSettings(navController, innerPadding)
     }

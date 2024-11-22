@@ -58,112 +58,91 @@ import mikhail.shell.bank.app.ui.rememberScreenSize
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(
-    profileViewModel: ProfileViewModel,
     navController: NavController = rememberNavController(),
+    user: User,
     innerPadding: PaddingValues = PaddingValues(0.dp)
-)
-{
-    var user: User? by rememberSaveable { mutableStateOf(null) }
-    val sharedPreferences =
-        LocalContext.current.getSharedPreferences("auth_details", Context.MODE_PRIVATE)
-    if (!sharedPreferences.contains("userid"))
-//        sharedPreferences.edit().putLong("userid", 505L).apply()
-        sharedPreferences.edit {
-            putLong("userid", 505L)
-            apply()
-        }
-    val userid = sharedPreferences.getLong("userid", 0)
-    LaunchedEffect(true) {
-        launch (Dispatchers.IO) {
-            user = profileViewModel.getProfile(userid)
-        }
-    }
+) {
     val windowInfo = calculateWindowSizeClass(activity = LocalContext.current as Activity)
     //val windowInfo = rememberWindowState()
     val screenInfo = rememberScreenSize()
     val scrollState = rememberScrollState()
-    if (user != null) {
-        Column (
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
-                .verticalScroll(scrollState)
-        )
-        {
-            //if (windowInfo.screenWidthType is WindowInfo.WindowType.Compact)
-            //if (screenInfo.screenWidthType == COMPACT)
-            if (windowInfo.widthSizeClass == WindowWidthSizeClass.Compact)
-            {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp)
+            .verticalScroll(scrollState)
+    ) {
+        //if (windowInfo.screenWidthType is WindowInfo.WindowType.Compact)
+        //if (screenInfo.screenWidthType == COMPACT)
+        if (windowInfo.widthSizeClass == WindowWidthSizeClass.Compact) {
+            AvatarSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            SectionsSpacer()
+            UserDataSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 40.dp),
+                user = user!!
+            )
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
                 AvatarSection(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.35f),
+                    imgSize = 200.dp
                 )
-                SectionsSpacer()
                 UserDataSection(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 40.dp),
+                        .fillMaxWidth(0.65f),
                     user = user!!
                 )
             }
-            else {
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    AvatarSection(
-                        modifier = Modifier
-                            .fillMaxWidth(0.35f),
-                        imgSize = 200.dp
-                    )
-                    UserDataSection(
-                        modifier = Modifier
-                            .fillMaxWidth(0.65f),
-                        user = user!!
-                    )
-                }
-                SectionsSpacer()
-            }
-            if (windowInfo.widthSizeClass == WindowWidthSizeClass.Compact)
-            //if (screenInfo.screenWidthType == COMPACT)
-            {
+            SectionsSpacer()
+        }
+        if (windowInfo.widthSizeClass == WindowWidthSizeClass.Compact)
+        //if (screenInfo.screenWidthType == COMPACT)
+        {
+            NotificationsChooserSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            SectionsSpacer()
+            SettingsSection(navController, user!!)
+            SyncSwitchSection()
+            SectionsSpacer()
+            LanguageChooserSection()
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 NotificationsChooserSection(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.5f)
                 )
-                SectionsSpacer()
                 SettingsSection(navController, user!!)
-                SyncSwitchSection()
-                SectionsSpacer()
-                LanguageChooserSection()
             }
-            else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    NotificationsChooserSection(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                    )
-                    SettingsSection(navController, user!!)
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    SyncSwitchSection()
-                    LanguageChooserSection()
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                SyncSwitchSection()
+                LanguageChooserSection()
             }
         }
     }
+
 
 }
 
