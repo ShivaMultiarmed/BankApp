@@ -186,14 +186,12 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
         val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
             factory.create(userid)
         }
-        val cards by homeViewModel.cards.collectAsStateWithLifecycle()
-        val currencies by homeViewModel.currencies.collectAsStateWithLifecycle()
-        val tools by homeViewModel.tools.collectAsStateWithLifecycle()
+        val screenState by homeViewModel.screenState.collectAsStateWithLifecycle()
         HomeScreen(
             navController = navController,
-            cards = cards,
-            currencies = currencies,
-            tools = tools,
+            cards = screenState.cards,
+            currencies = screenState.currencies,
+            tools = screenState.tools,
             innerPadding = innerPadding
         )
     }
@@ -222,9 +220,10 @@ fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: Padd
             val profileViewModel = hiltViewModel<ProfileViewModel, ProfileViewModel.Factory> { factory ->
                 factory.create(args.userid)
             }
-            val user by profileViewModel.profile.collectAsStateWithLifecycle()
-            if (user != null) {
-                ProfileScreen(navController, user!!, innerPadding)
+            val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
+            if (screenState != null) {
+                val user = screenState!!.user
+                ProfileScreen(navController, user, innerPadding)
             }
         }
         goToSettings(navController, innerPadding)

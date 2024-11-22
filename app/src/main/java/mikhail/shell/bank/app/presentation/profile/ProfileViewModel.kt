@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.User
@@ -30,15 +32,25 @@ class ProfileViewModel @AssistedInject constructor(
             _profile.emit(user)
         }
     }
-    val profile = _profile
-        .catch {
-            _profile.emit(null)
+    // TODO create and combine other flows
+    val screenState = combine(_profile) { collectedProfile ->
+        val user = collectedProfile[0]
+        if (user != null)
+        {
+            ProfileScreenState(
+                user = user
+            )
         }
-        .filterNotNull()
+        else null
+    }
+//        .catch {
+//            _profile.emit(null)
+//        }
+//        .filterNotNull()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            _profile.value
+            null
         )
     @AssistedFactory
     interface Factory {

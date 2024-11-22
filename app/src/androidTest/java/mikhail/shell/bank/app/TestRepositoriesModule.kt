@@ -28,7 +28,7 @@ import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import mikhail.shell.bank.app.domain.repository.ToolsRepository
 import javax.inject.Singleton
 
-@Module
+/*@Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [RepositoriesModule::class])
 object TestRepositoriesModule {
     @Provides
@@ -74,4 +74,4 @@ object TestRepositoriesModule {
             return User(404, "Cameron Magconahan", "qwerty", "Мужской")
         }
     }
-}
+}*/

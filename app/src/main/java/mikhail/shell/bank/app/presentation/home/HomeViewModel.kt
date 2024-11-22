@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.domain.models.Card
@@ -30,13 +31,10 @@ class HomeViewModel @AssistedInject constructor(
     private val getCurrenciesUseCase: GetCurrencies
 ): ViewModel() {
     private val _cards = MutableStateFlow(DEFAULT_CARDS)
-    val cards = _cards.asStateFlow()
 
     private val _currencies = MutableStateFlow(DEFAULT_CURRENCIES)
-    val currencies = _currencies.asStateFlow()
 
     private val _tools = MutableStateFlow(DEFAULT_TOOLS)
-    val tools = _tools.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -49,6 +47,10 @@ class HomeViewModel @AssistedInject constructor(
             collectFlow(getCurrenciesUseCase(), _currencies, DEFAULT_CURRENCIES)
         }
     }
+
+    val screenState = combine(_cards, _currencies,_tools) { cards, currencies, tools ->
+        HomeScreenState(cards, tools, currencies)
+    }.asStateFlow(HomeScreenState())
     @AssistedFactory
     interface Factory {
         fun create(userid: Long): HomeViewModel
@@ -59,10 +61,10 @@ class HomeViewModel @AssistedInject constructor(
         val DEFAULT_TOOLS = emptyList<FinanceTool>()
         const val SUBSCRIPTION_DURATION = 5000L
     }
-    fun <T> StateFlow<T>.asStateFlow() = this.stateIn(
+    fun <T> Flow<T>.asStateFlow(initialVal: T) = this.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(SUBSCRIPTION_DURATION),
-        this.value
+        initialVal
     )
     private suspend fun <T> collectFlow(
         useCaseFlow: Flow<T>,
