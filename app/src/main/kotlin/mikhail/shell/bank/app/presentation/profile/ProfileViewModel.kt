@@ -43,9 +43,9 @@ class ProfileViewModel @AssistedInject constructor(
         }
         else null
     }
-//        .catch {
-//            _profile.emit(null)
-//        }
+        .catch {
+            emit(null)
+        }
 //        .filterNotNull()
         .stateIn(
             viewModelScope,

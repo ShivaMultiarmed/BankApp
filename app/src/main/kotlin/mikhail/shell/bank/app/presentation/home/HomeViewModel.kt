@@ -50,7 +50,11 @@ class HomeViewModel @AssistedInject constructor(
 
     val screenState = combine(_cards, _currencies,_tools) { cards, currencies, tools ->
         HomeScreenState(cards, tools, currencies)
-    }.asStateFlow(HomeScreenState())
+    }.catch {
+        HomeScreenState()
+    }.asStateFlow(
+        initialVal = HomeScreenState()
+    )
     @AssistedFactory
     interface Factory {
         fun create(userid: Long): HomeViewModel

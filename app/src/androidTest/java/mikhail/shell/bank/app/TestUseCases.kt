@@ -2,6 +2,7 @@ package mikhail.shell.bank.app
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.util.Log
+import app.cash.turbine.test
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +20,10 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.any
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
+import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import javax.inject.Inject
@@ -51,13 +54,15 @@ class TestUseCases {
         val expectedList = listOf(
             Card(CardSystem.MASTERCARD, CardType.BUSINESS, "2432 2342 7654 8776")
         )
-        val expectedFlow = MutableStateFlow(
+        val flow = MutableStateFlow(
             expectedList
         ) as Flow<List<Card>>
 
         `when`(cardsRepository.getCards(anyLong()))
-            .thenReturn(expectedFlow)
-        getCardsUseCase(505L)
+            .thenReturn(flow)
+        getCardsUseCase(505L).test {
+            Assert.assertEquals(expectedList, awaitItem())
+        }
 
     }
 }

@@ -5,6 +5,7 @@ plugins {
     id("kotlin-parcelize")
     id ("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -63,17 +64,18 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.database)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    testImplementation ("org.mockito:mockito-core:2.10.0")
-    testImplementation ("android.arch.core:core-testing:1.1.0")
+    androidTestImplementation ("org.mockito:mockito-android:5.4.0")
+    //testImplementation ("android.arch.core:core-testing:1.1.0")
     androidTestImplementation(libs.core.testing)
     testImplementation("app.cash.turbine:turbine:1.0.0")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+    androidTestImplementation("app.cash.turbine:turbine:1.0.0")
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

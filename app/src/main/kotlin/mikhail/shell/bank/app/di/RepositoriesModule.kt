@@ -6,7 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import mikhail.shell.bank.app.data.repository.CardsRepositoryImpl
 import mikhail.shell.bank.app.data.repository.CurrenciesRepositoryImpl
-import mikhail.shell.bank.app.data.repository.ProfileRepositoryImpl
+import mikhail.shell.bank.app.data.repository.ProfileRepositoryWithFirebase
 import mikhail.shell.bank.app.data.repository.ToolsRepositoryImpl
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import mikhail.shell.bank.app.domain.repository.CurrenciesRepository
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 abstract class RepositoriesModule {
     @Binds
     @Singleton
-    abstract fun bindProfileRepository(repositoryImpl: ProfileRepositoryImpl) : ProfileRepository
+    abstract fun bindProfileRepository(repositoryImpl: ProfileRepositoryWithFirebase) : ProfileRepository
     @Binds
     @Singleton
     abstract fun bindCardsRepository(repositoryImpl: CardsRepositoryImpl): CardsRepository

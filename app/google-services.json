@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "299945402541",
+    "firebase_url": "https://bankapp-f018e-default-rtdb.firebaseio.com",
+    "project_id": "bankapp-f018e",
+    "storage_bucket": "bankapp-f018e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299945402541:android:606b3e6c29bf21e9622624",
+        "android_client_info": {
+          "package_name": "mikhail.shell.bank.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJPQy24jEsT6QTepIILQ6fWgwcmI6em3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
