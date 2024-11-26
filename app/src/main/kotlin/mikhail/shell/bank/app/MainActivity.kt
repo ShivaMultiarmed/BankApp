@@ -133,7 +133,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = Route.HomeScreenRoute,
-                        enterTransition = {
+                        /*enterTransition = {
                             slideIntoContainer(
                                 towards = Up,
                                 animationSpec = tween(
@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity() {
                                     easing = LinearEasing
                                 )
                             )
-                        }
+                        }*/
                     ){
                         goToHome(navController,innerPadding)
                         goToProfile(navController, innerPadding)
@@ -195,6 +195,7 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
         HomeScreen(
             navController = navController,
             cards = screenState.cards,
+            balance = screenState.balance,
             currencies = screenState.currencies,
             tools = screenState.tools,
             innerPadding = innerPadding
@@ -243,7 +244,7 @@ fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: Pad
     {
         val animationDuration = 300
         composable<Route.ProfileGraphRoute.SettingsGraphRoute.SettingsScreenRoute>(
-            enterTransition = {
+            /*enterTransition = {
                 fadeIn(
                     initialAlpha = 0f,
                     animationSpec = tween(
@@ -274,19 +275,19 @@ fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: Pad
                         stiffness = Spring.StiffnessLow
                     )
                 )
-            }
+            }*/
         )
         {
             SettingsScreen(navController)
         }
         composable<Route.ProfileGraphRoute.SettingsGraphRoute.AdvancedSettingsRoute>(
-            enterTransition = {
+            /*enterTransition = {
                 scaleIn(
                     initialScale = 0f,
                     transformOrigin = TransformOrigin(0f,0f),
                     animationSpec = tween(1000, 0, LinearEasing)
                 )
-            }
+            }*/
         )
         {
             AdvancedSettingsScreen(navController)

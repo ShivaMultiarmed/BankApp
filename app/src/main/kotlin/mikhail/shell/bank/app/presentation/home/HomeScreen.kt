@@ -28,6 +28,7 @@ import mikhail.shell.bank.app.presentation.home.sections.WalletSection
 fun HomeScreen(
     navController: NavController = rememberNavController(),
     cards: List<Card> = listOf(),
+    balance: Double = 0.0,
     tools: List<FinanceTool> = listOf(),
     currencies: List<Currency> = listOf(),
     innerPadding: PaddingValues = PaddingValues(0.dp)
@@ -43,7 +44,7 @@ fun HomeScreen(
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
-        WalletSection()
+        WalletSection(balance)
         CardsSection(cards)
         FinanceSection(tools)
         Spacer(

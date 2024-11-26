@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.domain.models.Currency
 import mikhail.shell.bank.app.domain.models.FinanceTool
+import mikhail.shell.bank.app.domain.usecases.EvaluateBalance
 import mikhail.shell.bank.app.domain.usecases.GetCards
 import mikhail.shell.bank.app.domain.usecases.GetCurrencies
 import mikhail.shell.bank.app.domain.usecases.GetTools
@@ -27,6 +28,7 @@ import mikhail.shell.bank.app.domain.usecases.GetTools
 class HomeViewModel @AssistedInject constructor(
     @Assisted private val userid: Long,
     private val getCardsUseCase: GetCards,
+    private val evaluateBalanceUseCase: EvaluateBalance,
     private val getToolsUseCase: GetTools,
     private val getCurrenciesUseCase: GetCurrencies
 ): ViewModel() {
@@ -49,7 +51,8 @@ class HomeViewModel @AssistedInject constructor(
     }
 
     val screenState = combine(_cards, _currencies,_tools) { cards, currencies, tools ->
-        HomeScreenState(cards, tools, currencies)
+        val balance = evaluateBalanceUseCase(cards)
+        HomeScreenState(cards, balance, tools, currencies)
     }.catch {
         HomeScreenState()
     }.asStateFlow(

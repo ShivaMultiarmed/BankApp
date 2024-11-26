@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 
 @Preview
 @Composable
-fun WalletSection()
+fun WalletSection(
+    balance: Double = 0.0
+)
 {
     Row(
         modifier = Modifier
@@ -44,7 +46,7 @@ fun WalletSection()
             horizontalAlignment = Alignment.Start
         ) {
             Text(text = "Баланс", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onBackground)
-            Text(text = "₽ 35000.98", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+            Text(text = "₽ $balance", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         }
         Box(
             modifier = Modifier
