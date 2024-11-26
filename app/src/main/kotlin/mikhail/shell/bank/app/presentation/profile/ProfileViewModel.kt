@@ -26,32 +26,35 @@ class ProfileViewModel @AssistedInject constructor(
     private val getProfile: GetProfile
 ) : ViewModel() {
     private val _profile = MutableStateFlow<User?>(null)
+
     init {
         viewModelScope.launch {
             val user = getProfile(userid)
             _profile.emit(user)
         }
     }
-    // TODO create and combine other flows
+
     val screenState = combine(_profile) { collectedProfile ->
         val user = collectedProfile[0]
-        if (user != null)
-        {
-            ProfileScreenState(
-                user = user
-            )
-        }
-        else null
+        ProfileScreenState(
+            isLoading = false,
+            user = user
+        )
     }
         .catch {
-            emit(null)
+            emit(
+                ProfileScreenState(
+                    isLoading = false,
+                    user = null
+                )
+            )
         }
-//        .filterNotNull()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            null
+            ProfileScreenState()
         )
+
     @AssistedFactory
     interface Factory {
         fun create(userid: Long): ProfileViewModel

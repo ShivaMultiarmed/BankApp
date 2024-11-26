@@ -49,6 +49,8 @@ import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.presentation.settings.AdvancedSettingsScreen
 import mikhail.shell.bank.app.presentation.settings.SettingsScreen
 import mikhail.shell.bank.app.presentation.utils.BottomNavigationBar
+import mikhail.shell.bank.app.presentation.utils.ErrorComponent
+import mikhail.shell.bank.app.presentation.utils.LoadingComponent
 import mikhail.shell.bank.app.presentation.utils.TopBar
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
 import kotlin.reflect.KType
@@ -227,10 +229,18 @@ fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: Padd
                 factory.create(args.userid)
             }
             val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
-            if (screenState != null) {
-                val user = screenState!!.user
-                ProfileScreen(navController, user, innerPadding)
-            }
+                val user = screenState.user
+                if (!screenState.isLoading) {
+                    if (user != null) {
+                        ProfileScreen(navController, user, innerPadding)
+                    } else {
+                        ErrorComponent(modifier = Modifier.fillMaxSize())
+                    }
+                } else {
+                    LoadingComponent(
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
         }
         goToSettings(navController, innerPadding)
     }
