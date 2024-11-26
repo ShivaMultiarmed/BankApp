@@ -84,7 +84,7 @@ fun CardComposable(
                 Text(text = card.type.purpose, color = Color.White, fontSize = 12.sp)
             }
             Text(text = "₽ ${card.balance}", color = Color.White, fontSize = 18.sp)
-            Text(text = card.number, color = Color.White, fontSize = 16.sp)
+            Text(text = card.number.toString(), color = Color.White, fontSize = 16.sp)
         }
     }
 }

@@ -52,7 +52,7 @@ class TestUseCases {
 //            }
 //        }
         val expectedList = listOf(
-            Card(CardSystem.MASTERCARD, CardType.BUSINESS, "2432 2342 7654 8776")
+            Card(505L, CardSystem.MASTERCARD, CardType.BUSINESS, 2432_2342_7654_8776)
         )
         val flow = MutableStateFlow(
             expectedList

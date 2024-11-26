@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import mikhail.shell.bank.app.data.repository.CardsRepositoryImpl
+import mikhail.shell.bank.app.data.repository.CardsRepositoryWithFirebase
 import mikhail.shell.bank.app.data.repository.CurrenciesRepositoryImpl
 import mikhail.shell.bank.app.data.repository.ProfileRepositoryWithFirebase
 import mikhail.shell.bank.app.data.repository.ToolsRepositoryImpl
@@ -22,7 +22,7 @@ abstract class RepositoriesModule {
     abstract fun bindProfileRepository(repositoryImpl: ProfileRepositoryWithFirebase) : ProfileRepository
     @Binds
     @Singleton
-    abstract fun bindCardsRepository(repositoryImpl: CardsRepositoryImpl): CardsRepository
+    abstract fun bindCardsRepository(repositoryImpl: CardsRepositoryWithFirebase): CardsRepository
     @Binds
     @Singleton
     abstract fun bindServiceRepository(repositoryImpl: ToolsRepositoryImpl): ToolsRepository
