@@ -3,6 +3,7 @@ package mikhail.shell.bank.app.data.repository
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import mikhail.shell.bank.app.User
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
@@ -25,14 +26,19 @@ class ProfileRepositoryWithFirebaseTests {
         repository = ProfileRepositoryWithFirebase(firebaseDB)
     }
     @Test
-    fun testAddingUser() = runTest {
+    fun testAddingUser() = runBlocking {
         repository.createProfile(
             User(
-                303,
-                "Cal",
-                "qwerty",
+                505,
+                "Michael",
+                "abcde",
                 "Мужской"
             )
         )
+    }
+    @Test
+    fun testGettingUser() = runTest {
+        val user = repository.fetchProfile(505L)
+        println(user)
     }
 }

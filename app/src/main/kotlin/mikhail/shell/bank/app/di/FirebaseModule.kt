@@ -1,6 +1,9 @@
 package mikhail.shell.bank.app.di
 
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,5 +15,5 @@ import javax.inject.Singleton
 object FirebaseModule {
     @Provides
     @Singleton
-    fun fireDatabase() = FirebaseDatabase.getInstance()
+    fun fireDatabase() = Firebase.database
 }

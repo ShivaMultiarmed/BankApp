@@ -56,7 +56,12 @@ import kotlin.reflect.typeOf
 
 @Serializable
 @Parcelize
-data class User(val userid: Long, val name: String, val password: String, val gender: String) : Parcelable
+data class User(
+    val userid: Long = 0L,
+    val name: String = "",
+    val password: String = "",
+    val gender: String = ""
+) : Parcelable
 
 
 class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerializer<T>) : NavType<T>(isNullableAllowed = false)
