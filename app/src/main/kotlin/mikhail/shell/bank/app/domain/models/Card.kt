@@ -2,12 +2,11 @@ package mikhail.shell.bank.app.domain.models
 
 import kotlinx.serialization.Serializable
 import java.time.Instant
-import java.time.LocalDateTime
 import kotlin.random.Random
 
 @Serializable
 data class Card(
-    val userid: Long = 0,
+    val userid: String = "",
     val system: CardSystem = CardSystem.MASTERCARD,
     val type: CardType = CardType.SAVINGS,
     val number: Long = createRandomNumber(),

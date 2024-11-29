@@ -6,6 +6,5 @@ import javax.inject.Inject
 class GetCards @Inject constructor(
     private val cardsRepository: CardsRepository
 ) {
-    //@Inject lateinit var cardsRepository: CardsRepository
-    suspend operator fun invoke(userid: Long) = cardsRepository.getCards(userid)
+    suspend operator fun invoke(userid: String) = cardsRepository.getCards(userid)
 }

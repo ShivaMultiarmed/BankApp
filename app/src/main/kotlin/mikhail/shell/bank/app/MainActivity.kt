@@ -204,15 +204,15 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
         )
     }
 }
-fun Context.getUserId(): Long {
+fun Context.getUserId(): String {
     val sharedPreferences =
         getSharedPreferences("auth_details", Context.MODE_PRIVATE)
     if (!sharedPreferences.contains("userid"))
         sharedPreferences.edit {
-            putLong("userid", 505L)
+            putString("userid", "QiqijLdLeJOUhTg1qzsb")
             apply()
         }
-    return sharedPreferences.getLong("userid", 0)
+    return sharedPreferences.getString("userid", "")?: ""
 }
 
 fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues)

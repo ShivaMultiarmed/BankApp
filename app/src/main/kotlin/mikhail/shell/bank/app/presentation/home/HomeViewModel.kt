@@ -1,17 +1,14 @@
 package mikhail.shell.bank.app.presentation.home
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -26,7 +23,7 @@ import mikhail.shell.bank.app.domain.usecases.GetTools
 
 @HiltViewModel(assistedFactory = HomeViewModel.Factory::class)
 class HomeViewModel @AssistedInject constructor(
-    @Assisted private val userid: Long,
+    @Assisted private val userid: String,
     private val getCardsUseCase: GetCards,
     private val evaluateBalanceUseCase: EvaluateBalance,
     private val getToolsUseCase: GetTools,
@@ -60,7 +57,7 @@ class HomeViewModel @AssistedInject constructor(
     )
     @AssistedFactory
     interface Factory {
-        fun create(userid: Long): HomeViewModel
+        fun create(userid: String): HomeViewModel
     }
     private companion object {
         val DEFAULT_CARDS = emptyList<Card>()

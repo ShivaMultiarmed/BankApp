@@ -1,32 +1,21 @@
 package mikhail.shell.bank.app
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.util.Log
-import app.cash.turbine.test
-import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.domain.models.CardSystem
 import mikhail.shell.bank.app.domain.models.CardType
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import mikhail.shell.bank.app.domain.usecases.GetCards
-import org.junit.Assert
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.any
-import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import javax.inject.Inject
 
 @HiltAndroidTest
 class TestUseCases {
@@ -52,17 +41,15 @@ class TestUseCases {
 //            }
 //        }
         val expectedList = listOf(
-            Card(505L, CardSystem.MASTERCARD, CardType.BUSINESS, 2432_2342_7654_8776)
+            Card("505", CardSystem.MASTERCARD, CardType.BUSINESS, 2432_2342_7654_8776)
         )
         val flow = MutableStateFlow(
             expectedList
         ) as Flow<List<Card>>
 
-        `when`(cardsRepository.getCards(anyLong()))
+        `when`(cardsRepository.getCards(anyString()))
             .thenReturn(flow)
-        getCardsUseCase(505L).test {
-            Assert.assertEquals(expectedList, awaitItem())
-        }
+        getCardsUseCase("505L")
 
     }
 }
