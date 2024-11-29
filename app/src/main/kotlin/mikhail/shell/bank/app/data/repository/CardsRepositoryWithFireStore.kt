@@ -45,16 +45,18 @@ class CardsRepositoryWithFireStore @Inject constructor(
         cards.document(cardNumber.toString()).delete().await()
     }
 
-    private fun DocumentSnapshot.toCard() : Card
-    {
-        return data?.let { map ->
-            Card(
-                userid = map["userid"] as String,
-                system = CardSystem.valueOf(map["system"] as String),
-                type = CardType.valueOf(map["type"] as String),
-                number = map["number"] as Long,
-                balance = map["balance"] as Double
-            )
-        }?: Card()
-    }
+
+}
+
+fun DocumentSnapshot.toCard() : Card
+{
+    return data?.let { map ->
+        Card(
+            userid = map["userid"] as String,
+            system = CardSystem.valueOf(map["system"] as String),
+            type = CardType.valueOf(map["type"] as String),
+            number = map["number"] as Long,
+            balance = map["balance"] as Double
+        )
+    }?: Card()
 }

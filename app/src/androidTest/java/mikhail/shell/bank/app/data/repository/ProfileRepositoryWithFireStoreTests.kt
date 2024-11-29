@@ -26,6 +26,6 @@ class ProfileRepositoryWithFireStoreTests {
     }
     @Test
     fun testAddingProfile() = runBlocking {
-        repository.createProfile(User(name = "Mark", password =  "qwerty", gender = "Мужчина"))
+        repository.createProfile(User(name = "Ashley", password =  "qwerty", gender = "Женщина"))
     }
 }

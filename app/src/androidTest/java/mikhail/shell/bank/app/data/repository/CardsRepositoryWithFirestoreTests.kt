@@ -26,7 +26,7 @@ class CardsRepositoryWithFirestoreTests {
     }
     @Test
     fun testCreatingCard() = runBlocking {
-        val card = Card(userid = "505")
+        val card = Card(userid = "mDLOUJm8xZ48xVuhJf9Z")
         val createdCard = repository.createCard(card)
         Assert.assertEquals(card, createdCard)
     }
