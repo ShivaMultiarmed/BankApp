@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetProfile @Inject constructor(
     private val profileRepository: ProfileRepository
 ) {
-    suspend operator fun invoke(userid: Long) = profileRepository.fetchProfile(userid)
+    suspend operator fun invoke(userid: String) = profileRepository.fetchProfile(userid)
 }

@@ -59,12 +59,7 @@ import mikhail.shell.bank.app.ui.theme.spacing
 @Composable
 fun UserDataSection(
     modifier: Modifier = Modifier,
-    user: User = User(
-        0L,
-        "default",
-        "default",
-        "default"
-    )
+    user: User = User()
 )
 {
     Column(

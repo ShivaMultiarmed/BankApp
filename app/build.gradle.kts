@@ -5,7 +5,7 @@ plugins {
     id("kotlin-parcelize")
     id ("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
-    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.gms.google.services) apply true
 }
 
 android {
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.database)
     implementation(libs.firebase.bom)
+    implementation(libs.firebase.firestore)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

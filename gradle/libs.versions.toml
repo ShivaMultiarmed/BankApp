@@ -21,6 +21,7 @@ serialization = "1.6.3"
 coreTesting = "1.1.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseDatabase = "21.0.0"
+firebaseFirestore = "25.1.1"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version = "0.36.0" }
@@ -56,6 +57,7 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version = "5.0.0-alpha.14" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.11.0" }
 core-testing = { group = "android.arch.core", name = "core-testing", version.ref = "coreTesting" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

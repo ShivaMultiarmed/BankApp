@@ -59,7 +59,7 @@ import kotlin.reflect.typeOf
 @Serializable
 @Parcelize
 data class User(
-    val userid: Long = 0L,
+    val userid: String? = null,
     val name: String = "",
     val password: String = "",
     val gender: String = ""
@@ -99,7 +99,7 @@ sealed class Route {
     @Serializable
     data object ProfileGraphRoute : Route() {
         @Serializable
-        data class ProfileScreenRoute(val userid: Long) : Route()
+        data class ProfileScreenRoute(val userid: String) : Route()
         @Serializable
         data object SettingsGraphRoute : Route() {
             @Serializable

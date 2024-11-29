@@ -22,7 +22,7 @@ import mikhail.shell.bank.app.domain.usecases.GetProfile
 
 @HiltViewModel(assistedFactory = ProfileViewModel.Factory::class)
 class ProfileViewModel @AssistedInject constructor(
-    @Assisted private val userid: Long,
+    @Assisted private val userid: String,
     private val getProfile: GetProfile
 ) : ViewModel() {
     private val _profile = MutableStateFlow<User?>(null)
@@ -57,6 +57,6 @@ class ProfileViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(userid: Long): ProfileViewModel
+        fun create(userid: String): ProfileViewModel
     }
 }
