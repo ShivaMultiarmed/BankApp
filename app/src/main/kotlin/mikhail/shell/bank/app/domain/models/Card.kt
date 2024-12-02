@@ -9,16 +9,9 @@ data class Card(
     val userid: String = "",
     val system: CardSystem = CardSystem.MASTERCARD,
     val type: CardType = CardType.SAVINGS,
-    val number: Long = createRandomNumber(),
+    val number: Long = 0,
     var balance: Double = 0.0
-) {
-  companion object {
-      fun createRandomNumber() = Random(Instant.now().toEpochMilli()).nextLong(
-          1000_0000_0000_0000,
-                9999_9999_9999_9999
-          )
-  }
-}
+)
 @Serializable
 enum class CardSystem (val title: String) {
     VISA("Visa"), MASTERCARD("MasterCard")

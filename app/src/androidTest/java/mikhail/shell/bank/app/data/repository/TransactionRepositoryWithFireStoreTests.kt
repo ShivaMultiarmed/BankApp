@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import mikhail.shell.bank.app.domain.repository.TransactionsRepository
 import org.junit.Assert
@@ -26,10 +27,9 @@ class TransactionRepositoryWithFireStoreTests {
     }
     @Test
     fun testGettingTransactions() = runBlocking {
-        val transactions = repository.getTransactionsByUserId("QiqijLdLeJOUhTg1qzsb")
+        val transactions = repository.getTransactionsByUserId("mDLOUJm8xZ48xVuhJf9Z")
         transactions.test {
-            val list = awaitItem()
-            Assert.assertNotNull(list)
+            Assert.assertNotNull(awaitItem())
             awaitComplete()
         }
     }

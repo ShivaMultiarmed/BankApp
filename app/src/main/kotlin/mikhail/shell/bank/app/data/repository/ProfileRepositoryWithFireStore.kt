@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class ProfileRepositoryWithFireStore @Inject constructor(
     private val db: FirebaseFirestore
-) : ProfileRepository{
+) : ProfileRepository {
 
     private val users = db.collection("profiles")
 
@@ -21,11 +21,28 @@ class ProfileRepositoryWithFireStore @Inject constructor(
                 password = it["password"] as String,
                 gender = it["gender"] as String
             )
-        }?: User()
+        } ?: User()
     }
 
-    override suspend fun createProfile(user: User) {
-        val document = users.document()
-        document.set(user.copy(userid = document.id)).await()
+    override fun createProfile(
+        user: User,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+//        val document = users.document()
+//        document.set(user.copy(userid = document.id)).await()
+        users.add(user)
+            .addOnSuccessListener { docRef ->
+                val userid = docRef.id
+                users.document(userid)
+                    .update("userid", userid)
+                    .addOnSuccessListener {
+                        onSuccess(userid)
+                    }.addOnFailureListener { e ->
+                        throw e
+                    }
+            }.addOnFailureListener {
+                onFailure(it)
+            }
     }
 }

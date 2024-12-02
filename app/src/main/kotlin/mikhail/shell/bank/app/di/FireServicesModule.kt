@@ -1,5 +1,6 @@
 package mikhail.shell.bank.app.di
 
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,4 +19,7 @@ object FireServicesModule {
     @Provides
     @Singleton
     fun FireStore() = Firebase.firestore
+    @Provides
+    @Singleton
+    fun FireAuth() = Firebase.auth
 }

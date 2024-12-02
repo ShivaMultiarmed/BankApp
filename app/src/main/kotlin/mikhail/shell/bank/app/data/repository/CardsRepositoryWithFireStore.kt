@@ -10,7 +10,9 @@ import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.domain.models.CardSystem
 import mikhail.shell.bank.app.domain.models.CardType
 import mikhail.shell.bank.app.domain.repository.CardsRepository
+import java.time.Instant
 import javax.inject.Inject
+import kotlin.random.Random
 
 class CardsRepositoryWithFireStore @Inject constructor(
     private val db: FirebaseFirestore
@@ -20,36 +22,72 @@ class CardsRepositoryWithFireStore @Inject constructor(
 
     override suspend fun getCards(userid: String): Flow<List<Card>> {
         val flow = MutableStateFlow(listOf<Card>())
-        cards.whereEqualTo("userid", userid).addSnapshotListener { list, e ->
-            val cardsList = list?.map { snapshot -> snapshot.toCard() }?: listOf()
-            flow.value = cardsList
-        }
+        cards.whereEqualTo("userid", userid)
+            .addSnapshotListener { list, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                val cardsList = list?.map { snapshot -> snapshot.toCard() } ?: listOf()
+                flow.value = cardsList
+            }
         return flow
     }
 
-    override suspend fun createCard(card: Card): Card {
-        cards.document(card.number.toString()).set(card).await()
-        return card
+    override fun createCard(
+        card: Card,
+        onSuccess: (Long) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val number = createRandomNumber()
+        cards.document(number.toString())
+            .set(card.copy(number = number))
+            .addOnSuccessListener {
+                onSuccess(number)
+            }.addOnFailureListener { e ->
+                onFailure(e)
+            }
     }
 
     override suspend fun getCard(cardNumber: Long): Card {
         return cards.document(cardNumber.toString()).get().await().toCard()
     }
 
-    override suspend fun updateCard(card: Card): Card {
-        cards.document(card.number.toString()).set(card).await()
-        return card
+    override fun updateCard(
+        card: Card,
+        onSuccess: (Card) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        cards.document(card.number.toString())
+            .set(card)
+            .addOnSuccessListener {
+                onSuccess(card)
+            }.addOnFailureListener { e ->
+                onFailure(e)
+            }
     }
 
-    override suspend fun deleteCard(cardNumber: Long) {
-        cards.document(cardNumber.toString()).delete().await()
+    override fun deleteCard(
+        cardNumber: Long,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        cards.document(cardNumber.toString())
+            .delete()
+            .addOnSuccessListener {
+                onSuccess()
+            }.addOnFailureListener { e ->
+                onFailure(e)
+            }
     }
 
+    private fun createRandomNumber() = Random(Instant.now().toEpochMilli()).nextLong(
+        1000_0000_0000_0000,
+        9999_9999_9999_9999
+    )
 
 }
 
-fun DocumentSnapshot.toCard() : Card
-{
+fun DocumentSnapshot.toCard(): Card {
     return data?.let { map ->
         Card(
             userid = map["userid"] as String,
@@ -58,5 +96,5 @@ fun DocumentSnapshot.toCard() : Card
             number = map["number"] as Long,
             balance = map["balance"] as Double
         )
-    }?: Card()
+    } ?: Card()
 }

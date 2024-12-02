@@ -5,8 +5,20 @@ import mikhail.shell.bank.app.domain.models.Card
 
 interface CardsRepository {
     suspend fun getCards(userid: String): Flow<List<Card>>
-    suspend fun createCard(card: Card): Card
+    fun createCard(
+        card: Card,
+        onSuccess: (Long) -> Unit,
+        onFailure: (Exception) -> Unit
+    )
     suspend fun getCard(cardNumber: Long): Card
-    suspend fun updateCard(card: Card): Card
-    suspend fun deleteCard(cardNumber: Long)
+    fun updateCard(
+        card: Card,
+        onSuccess: (Card) -> Unit,
+        onFailure: (Exception) -> Unit
+    )
+    fun deleteCard(
+        cardNumber: Long,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    )
 }
