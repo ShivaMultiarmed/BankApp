@@ -21,8 +21,12 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +41,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.KSerializer
@@ -48,6 +54,10 @@ import mikhail.shell.bank.app.presentation.profile.ProfileScreen
 import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.presentation.settings.AdvancedSettingsScreen
 import mikhail.shell.bank.app.presentation.settings.SettingsScreen
+import mikhail.shell.bank.app.presentation.signin.SignInScreen
+import mikhail.shell.bank.app.presentation.signin.SignInState
+import mikhail.shell.bank.app.presentation.signin.SignInViewModel
+import mikhail.shell.bank.app.presentation.utils.ApplicationScaffold
 import mikhail.shell.bank.app.presentation.utils.BottomNavigationBar
 import mikhail.shell.bank.app.presentation.utils.ErrorComponent
 import mikhail.shell.bank.app.presentation.utils.LoadingComponent
@@ -95,6 +105,9 @@ class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerialize
 @Serializable
 sealed class Route {
     @Serializable
+    data object SignInRoute : Route()
+
+    @Serializable
     data object HomeScreenRoute : Route()
 
     @Serializable
@@ -126,105 +139,103 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             BankAppTheme {
-                Scaffold(
-                    modifier = Modifier.Companion
-                        .fillMaxSize(),
-                    topBar = {
-                        TopBar()
-                    },
-                    bottomBar = {
-                        BottomNavigationBar(navController)
-                    }
-                ) { innerPadding ->
 
-                    NavHost(
-                        navController = navController,
-                        startDestination = Route.HomeScreenRoute,
-                        /*enterTransition = {
-                            slideIntoContainer(
-                                towards = Up,
-                                animationSpec = tween(
-                                    durationMillis = 1000,
-                                    delayMillis = 0,
-                                    easing = LinearEasing
-                                )
+                NavHost(
+                    navController = navController,
+                    startDestination = Route.SignInRoute,
+                    /*enterTransition = {
+                        slideIntoContainer(
+                            towards = Up,
+                            animationSpec = tween(
+                                durationMillis = 1000,
+                                delayMillis = 0,
+                                easing = LinearEasing
                             )
-                        },
-                        exitTransition = {
-                            slideOutOfContainer(
-                                towards = Up,
-                                animationSpec = tween(
-                                    durationMillis = 1000,
-                                    delayMillis = 0,
-                                    easing = LinearEasing
-                                )
+                        )
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            towards = Up,
+                            animationSpec = tween(
+                                durationMillis = 1000,
+                                delayMillis = 0,
+                                easing = LinearEasing
                             )
-                        },
-                        popEnterTransition = {
-                            slideIntoContainer(
-                                towards = Down,
-                                animationSpec = tween(
-                                    durationMillis = 1000,
-                                    delayMillis = 0,
-                                    easing = LinearEasing
-                                )
+                        )
+                    },
+                    popEnterTransition = {
+                        slideIntoContainer(
+                            towards = Down,
+                            animationSpec = tween(
+                                durationMillis = 1000,
+                                delayMillis = 0,
+                                easing = LinearEasing
                             )
-                        },
-                        popExitTransition = {
-                            slideOutOfContainer(
-                                towards = Down,
-                                animationSpec = tween(
-                                    durationMillis = 1000,
-                                    delayMillis = 0,
-                                    easing = LinearEasing
-                                )
+                        )
+                    },
+                    popExitTransition = {
+                        slideOutOfContainer(
+                            towards = Down,
+                            animationSpec = tween(
+                                durationMillis = 1000,
+                                delayMillis = 0,
+                                easing = LinearEasing
                             )
-                        }*/
-                    ) {
-                        goToHome(navController, innerPadding)
-                        goToProfile(navController, innerPadding)
+                        )
+                    }*/
+                ) {
+                    composable<Route.SignInRoute> {
+                        val viewModel = hiltViewModel<SignInViewModel>()
+                        val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
+                        SignInScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            navController = navController,
+                            state = signInState,
+                            onSubmit = { email, password ->
+                                viewModel.signIn(email, password)
+                            }
+                        )
                     }
+                    goToHome(navController)
+                    goToProfile(navController)
                 }
+
 
             }
         }
     }
 }
 
-fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: PaddingValues) {
+fun NavGraphBuilder.goToHome(navController: NavController) {
     composable<Route.HomeScreenRoute> {
-        val userid = LocalContext.current.getUserId()
-        val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
-            factory.create(userid)
+        val userid = getUserId()
+        if (userid == null)
+            navController.navigate(Route.SignInRoute)
+        else {
+            val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
+                factory.create(userid)
+            }
+            val screenState by homeViewModel.screenState.collectAsStateWithLifecycle()
+            ApplicationScaffold (
+                userid = userid,
+                navController = navController
+            ) { innerPadding ->
+                HomeScreen(
+                    navController = navController,
+                    cards = screenState.cards,
+                    balance = screenState.balance,
+                    currencies = screenState.currencies,
+                    tools = screenState.tools,
+                    innerPadding = innerPadding
+                )
+            }
         }
-        val screenState by homeViewModel.screenState.collectAsStateWithLifecycle()
-        HomeScreen(
-            navController = navController,
-            cards = screenState.cards,
-            balance = screenState.balance,
-            currencies = screenState.currencies,
-            tools = screenState.tools,
-            innerPadding = innerPadding
-        )
     }
 }
 
-fun Context.getUserId(): String {
-    val sharedPreferences =
-        getSharedPreferences("auth_details", Context.MODE_PRIVATE)
-    sharedPreferences.edit {
-        clear()
-        apply()
-    }
-    if (!sharedPreferences.contains("userid"))
-        sharedPreferences.edit {
-            putString("userid", "QiqijLdLeJOUhTg1qzsb")
-            apply()
-        }
-    return sharedPreferences.getString("userid", "") ?: ""
-}
+fun getUserId() = Firebase.auth.currentUser?.uid
 
-fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues) {
+fun NavGraphBuilder.goToProfile(navController: NavController) {
     navigation<Route.ProfileGraphRoute>(
         startDestination = Route.ProfileGraphRoute.ProfileScreenRoute::class
     )
@@ -239,22 +250,30 @@ fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: Padd
                 }
             val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
             val user = screenState.user
-            if (!screenState.isLoading) {
-                if (user != null) {
-                    ProfileScreen(navController, user, innerPadding)
-                } else {
-                    ErrorComponent(modifier = Modifier.fillMaxSize())
+            if (user?.userid != null)
+            {
+                ApplicationScaffold (
+                    navController = navController,
+                    userid = user.userid
+                ) { innerPadding ->
+                    if (!screenState.isLoading) {
+                        if (user != null) {
+                            ProfileScreen(navController, user, innerPadding)
+                        } else {
+                            ErrorComponent(modifier = Modifier.fillMaxSize())
+                        }
+                    } else {
+                        LoadingComponent(modifier = Modifier.fillMaxSize())
+                    }
                 }
-            } else {
-                LoadingComponent(modifier = Modifier.fillMaxSize())
             }
         }
-        goToSettings(navController, innerPadding)
+        goToSettings(navController)
     }
 
 }
 
-fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: PaddingValues) {
+fun NavGraphBuilder.goToSettings(navController: NavController) {
     navigation<Route.ProfileGraphRoute.SettingsGraphRoute>(
         startDestination = Route.ProfileGraphRoute.SettingsGraphRoute.SettingsScreenRoute::class
     )

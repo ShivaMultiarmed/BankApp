@@ -45,36 +45,43 @@ sealed class BottomNavigationItem<T : Route>(
     data object Home : BottomNavigationItem<Route>(
         Route.HomeScreenRoute,
         "Главная",
-        Icons.Rounded.Home)
-    data object Wallet: BottomNavigationItem<Route>(
+        Icons.Rounded.Home
+    )
+
+    data object Wallet : BottomNavigationItem<Route>(
         Route.WalletScreenRoute,
         "Кошелек",
         Icons.Rounded.AccountBalanceWallet
     )
-    data object Notifications: BottomNavigationItem<Route>(
+
+    data object Notifications : BottomNavigationItem<Route>(
         Route.TransactionsScreenRoute,
         "Переводы",
         Icons.Rounded.Autorenew,
         4546
     )
-    data object Profile: BottomNavigationItem<Route>(
-        Route.ProfileGraphRoute.ProfileScreenRoute("QiqijLdLeJOUhTg1qzsb"),
+
+    data class Profile(val userid: String) : BottomNavigationItem<Route>(
+        Route.ProfileGraphRoute.ProfileScreenRoute(userid),
         "Профиль",
         Icons.Rounded.AccountCircle,
-        1267)
+        1267
+    )
 }
-val items = listOf(
-    BottomNavigationItem.Home,
-    BottomNavigationItem.Wallet,
-    BottomNavigationItem.Notifications,
-    BottomNavigationItem.Profile
-)
+
 
 //@Preview
 @Composable
-@Preview
-fun BottomNavigationBar(navController: NavController = rememberNavController())
-{
+fun BottomNavigationBar(
+    navController: NavController = rememberNavController(),
+    userid: String
+) {
+    val items = listOf(
+        BottomNavigationItem.Home,
+        BottomNavigationItem.Wallet,
+        BottomNavigationItem.Notifications,
+        BottomNavigationItem.Profile(userid)
+    )
     var selectedIcon by remember {
         mutableStateOf(0)
     }
@@ -82,13 +89,13 @@ fun BottomNavigationBar(navController: NavController = rememberNavController())
 //    val selectedItemNumber = items.indexOfFirst {
 //        //it == currentBackStackEntry?.destination?.
 //    }
-    NavigationBar (
+    NavigationBar(
 
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -109,13 +116,12 @@ fun BottomNavigationBar(navController: NavController = rememberNavController())
                     colors = NavigationBarItemDefaults.colors(
 //                        unselectedIconColor = Color.Cyan,
 //                        selectedIconColor = Color.Blue,
-                            indicatorColor = Color.Transparent,
+                        indicatorColor = Color.Transparent,
 //                        selectedTextColor = Color.Green,
 //                        unselectedTextColor = Color.Yellow
                     ),
                     icon = {
-                        if (item.count > 0)
-                        {
+                        if (item.count > 0) {
                             BadgedBox(
                                 badge = {
                                     Text(
@@ -136,8 +142,7 @@ fun BottomNavigationBar(navController: NavController = rememberNavController())
                                     tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
-                        }
-                        else {
+                        } else {
                             Icon(
                                 imageVector = item.icon,
                                 contentDescription = item.title,
@@ -146,8 +151,7 @@ fun BottomNavigationBar(navController: NavController = rememberNavController())
                         }
                     },
                     label = {
-                        if (selectedIcon == i)
-                        {
+                        if (selectedIcon == i) {
                             Text(
                                 text = item.title,
                                 color = MaterialTheme.colorScheme.onBackground,

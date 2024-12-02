@@ -4,10 +4,12 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import mikhail.shell.bank.app.data.repository.AuthRepositoryWithFireAuthentication
 import mikhail.shell.bank.app.data.repository.CardsRepositoryWithFireStore
 import mikhail.shell.bank.app.data.repository.CurrenciesRepositoryImpl
 import mikhail.shell.bank.app.data.repository.ProfileRepositoryWithFireStore
 import mikhail.shell.bank.app.data.repository.ToolsRepositoryImpl
+import mikhail.shell.bank.app.domain.repository.AuthRepository
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import mikhail.shell.bank.app.domain.repository.CurrenciesRepository
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
@@ -29,4 +31,7 @@ abstract class RepositoriesModule {
     @Binds
     @Singleton
     abstract fun bindCurrenciesRepository(repositoryImpl: CurrenciesRepositoryImpl): CurrenciesRepository
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(repositoryImpl: AuthRepositoryWithFireAuthentication): AuthRepository
 }
