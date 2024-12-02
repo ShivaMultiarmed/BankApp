@@ -40,20 +40,18 @@ class ProfileViewModel @AssistedInject constructor(
             isLoading = false,
             user = user
         )
-    }
-        .catch {
-            emit(
-                ProfileScreenState(
-                    isLoading = false,
-                    user = null
-                )
+    }.catch {
+        emit(
+            ProfileScreenState(
+                isLoading = false,
+                user = null
             )
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            ProfileScreenState()
         )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        ProfileScreenState()
+    )
 
     @AssistedFactory
     interface Factory {

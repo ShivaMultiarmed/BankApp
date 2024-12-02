@@ -58,7 +58,7 @@ sealed class BottomNavigationItem<T : Route>(
         4546
     )
     data object Profile: BottomNavigationItem<Route>(
-        Route.ProfileGraphRoute.ProfileScreenRoute("505"),
+        Route.ProfileGraphRoute.ProfileScreenRoute("QiqijLdLeJOUhTg1qzsb"),
         "Профиль",
         Icons.Rounded.AccountCircle,
         1267)

@@ -66,15 +66,15 @@ data class User(
 ) : Parcelable
 
 
-class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerializer<T>) : NavType<T>(isNullableAllowed = false)
-{
+class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerializer<T>) :
+    NavType<T>(isNullableAllowed = false) {
     override fun get(bundle: Bundle, key: String): T? {
         return (
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU )
-                bundle.getParcelable(key, klass) as T
-            else
-                bundle.getParcelable(key)
-        )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                    bundle.getParcelable(key, klass) as T
+                else
+                    bundle.getParcelable(key)
+                )
     }
 
     override fun parseValue(value: String): T = Json.decodeFromString(serializer, value)
@@ -96,20 +96,25 @@ class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerialize
 sealed class Route {
     @Serializable
     data object HomeScreenRoute : Route()
+
     @Serializable
     data object ProfileGraphRoute : Route() {
         @Serializable
         data class ProfileScreenRoute(val userid: String) : Route()
+
         @Serializable
         data object SettingsGraphRoute : Route() {
             @Serializable
             data object SettingsScreenRoute : Route()
+
             @Serializable
             data object AdvancedSettingsRoute : Route()
         }
     }
+
     @Serializable
     data object TransactionsScreenRoute : Route()
+
     @Serializable
     data object WalletScreenRoute : Route()
 }
@@ -175,8 +180,8 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                         }*/
-                    ){
-                        goToHome(navController,innerPadding)
+                    ) {
+                        goToHome(navController, innerPadding)
                         goToProfile(navController, innerPadding)
                     }
                 }
@@ -186,8 +191,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: PaddingValues)
-{
+fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: PaddingValues) {
     composable<Route.HomeScreenRoute> {
         val userid = LocalContext.current.getUserId()
         val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
@@ -204,19 +208,23 @@ fun NavGraphBuilder.goToHome(navController: NavController, innerPadding: Padding
         )
     }
 }
+
 fun Context.getUserId(): String {
     val sharedPreferences =
         getSharedPreferences("auth_details", Context.MODE_PRIVATE)
+    sharedPreferences.edit {
+        clear()
+        apply()
+    }
     if (!sharedPreferences.contains("userid"))
         sharedPreferences.edit {
             putString("userid", "QiqijLdLeJOUhTg1qzsb")
             apply()
         }
-    return sharedPreferences.getString("userid", "")?: ""
+    return sharedPreferences.getString("userid", "") ?: ""
 }
 
-fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues)
-{
+fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: PaddingValues) {
     navigation<Route.ProfileGraphRoute>(
         startDestination = Route.ProfileGraphRoute.ProfileScreenRoute::class
     )
@@ -225,29 +233,28 @@ fun NavGraphBuilder.goToProfile(navController: NavController, innerPadding: Padd
             typeMap = AppNavType.Companion.getMap(User.serializer())
         ) { navBackStackEntry ->
             val args = navBackStackEntry.toRoute<Route.ProfileGraphRoute.ProfileScreenRoute>()
-            val profileViewModel = hiltViewModel<ProfileViewModel, ProfileViewModel.Factory> { factory ->
-                factory.create(args.userid)
-            }
-            val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
-                val user = screenState.user
-                if (!screenState.isLoading) {
-                    if (user != null) {
-                        ProfileScreen(navController, user, innerPadding)
-                    } else {
-                        ErrorComponent(modifier = Modifier.fillMaxSize())
-                    }
-                } else {
-                    LoadingComponent(
-                        modifier = Modifier.fillMaxSize()
-                    )
+            val profileViewModel =
+                hiltViewModel<ProfileViewModel, ProfileViewModel.Factory> { factory ->
+                    factory.create(args.userid)
                 }
+            val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
+            val user = screenState.user
+            if (!screenState.isLoading) {
+                if (user != null) {
+                    ProfileScreen(navController, user, innerPadding)
+                } else {
+                    ErrorComponent(modifier = Modifier.fillMaxSize())
+                }
+            } else {
+                LoadingComponent(modifier = Modifier.fillMaxSize())
+            }
         }
         goToSettings(navController, innerPadding)
     }
 
 }
-fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: PaddingValues)
-{
+
+fun NavGraphBuilder.goToSettings(navController: NavController, innerPadding: PaddingValues) {
     navigation<Route.ProfileGraphRoute.SettingsGraphRoute>(
         startDestination = Route.ProfileGraphRoute.SettingsGraphRoute.SettingsScreenRoute::class
     )
