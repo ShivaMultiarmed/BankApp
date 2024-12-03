@@ -60,7 +60,8 @@ import mikhail.shell.bank.app.ui.rememberScreenSize
 fun ProfileScreen(
     navController: NavController = rememberNavController(),
     user: User,
-    innerPadding: PaddingValues = PaddingValues(0.dp)
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    onSignOutClicked: () -> Unit
 ) {
     val windowInfo = calculateWindowSizeClass(activity = LocalContext.current as Activity)
     //val windowInfo = rememberWindowState()
@@ -88,7 +89,7 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 40.dp),
-                user = user!!
+                user = user
             )
         } else {
             Row(
@@ -105,7 +106,7 @@ fun ProfileScreen(
                 UserDataSection(
                     modifier = Modifier
                         .fillMaxWidth(0.65f),
-                    user = user!!
+                    user = user
                 )
             }
             SectionsSpacer()
@@ -118,7 +119,7 @@ fun ProfileScreen(
                     .fillMaxWidth()
             )
             SectionsSpacer()
-            SettingsSection(navController, user!!)
+            SettingsSection(navController, user)
             SyncSwitchSection()
             SectionsSpacer()
             LanguageChooserSection()
@@ -131,7 +132,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
                 )
-                SettingsSection(navController, user!!)
+                SettingsSection(navController, user)
             }
             Row(
                 modifier = Modifier
@@ -139,6 +140,17 @@ fun ProfileScreen(
             ) {
                 SyncSwitchSection()
                 LanguageChooserSection()
+            }
+        }
+        Row (
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button (
+                onClick = {
+                    onSignOutClicked()
+                }
+            ) {
+                Text("Выйти")
             }
         }
     }

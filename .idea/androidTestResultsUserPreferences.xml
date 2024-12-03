@@ -115,6 +115,7 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_2_API_26" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A736B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -185,7 +186,47 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="128671272">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_2_API_26" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A736B" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="182077789">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_2_API_26" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1108131087">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A736B" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1134357873">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
@@ -206,6 +247,19 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_2_API_26" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1772269791">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A736B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

@@ -1,36 +1,13 @@
 package mikhail.shell.bank.app
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.End
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -55,13 +32,10 @@ import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.presentation.settings.AdvancedSettingsScreen
 import mikhail.shell.bank.app.presentation.settings.SettingsScreen
 import mikhail.shell.bank.app.presentation.signin.SignInScreen
-import mikhail.shell.bank.app.presentation.signin.SignInState
 import mikhail.shell.bank.app.presentation.signin.SignInViewModel
 import mikhail.shell.bank.app.presentation.utils.ApplicationScaffold
-import mikhail.shell.bank.app.presentation.utils.BottomNavigationBar
 import mikhail.shell.bank.app.presentation.utils.ErrorComponent
 import mikhail.shell.bank.app.presentation.utils.LoadingComponent
-import mikhail.shell.bank.app.presentation.utils.TopBar
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -71,13 +45,16 @@ import kotlin.reflect.typeOf
 data class User(
     val userid: String? = null,
     val name: String = "",
-    val password: String = "",
     val gender: String = ""
 ) : Parcelable
 
 
-class AppNavType<T : Parcelable>(val klass: Class<T>, val serializer: KSerializer<T>) :
-    NavType<T>(isNullableAllowed = false) {
+class AppNavType<T : Parcelable>(
+    private val klass: Class<T>,
+    private val serializer: KSerializer<T>
+) : NavType<T>(
+    isNullableAllowed = false
+) {
     override fun get(bundle: Bundle, key: String): T? {
         return (
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -184,28 +161,34 @@ class MainActivity : ComponentActivity() {
                         )
                     }*/
                 ) {
-                    composable<Route.SignInRoute> {
-                        val viewModel = hiltViewModel<SignInViewModel>()
-                        val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
-                        SignInScreen(
-                            modifier = Modifier.fillMaxSize(),
-                            navController = navController,
-                            state = signInState,
-                            onSubmit = { email, password ->
-                                viewModel.signIn(email, password)
-                            }
-                        )
-                    }
+                    authRoutes(navController)
                     goToHome(navController)
                     goToProfile(navController)
                 }
-
-
             }
         }
     }
 }
-
+fun NavGraphBuilder.authRoutes(
+    navController: NavController
+) {
+    composable<Route.SignInRoute> {
+        val viewModel = hiltViewModel<SignInViewModel>()
+        if (viewModel.checkIfSignedIn())
+            navController.navigate(Route.HomeScreenRoute)
+        else {
+            val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
+            SignInScreen(
+                modifier = Modifier.fillMaxSize(),
+                navController = navController,
+                state = signInState,
+                onSubmit = { email, password ->
+                    viewModel.signIn(email, password)
+                }
+            )
+        }
+    }
+}
 fun NavGraphBuilder.goToHome(navController: NavController) {
     composable<Route.HomeScreenRoute> {
         val userid = getUserId()
@@ -258,12 +241,24 @@ fun NavGraphBuilder.goToProfile(navController: NavController) {
                 ) { innerPadding ->
                     if (!screenState.isLoading) {
                         if (user != null) {
-                            ProfileScreen(navController, user, innerPadding)
+                            ProfileScreen(
+                                navController = navController,
+                                user = user,
+                                innerPadding = innerPadding,
+                                onSignOutClicked = {
+                                    profileViewModel.signOut()
+                                    navController.navigate(Route.SignInRoute)
+                                }
+                            )
                         } else {
-                            ErrorComponent(modifier = Modifier.fillMaxSize())
+                            ErrorComponent(
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                     } else {
-                        LoadingComponent(modifier = Modifier.fillMaxSize())
+                        LoadingComponent(
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                 }
             }

@@ -2,6 +2,7 @@ package mikhail.shell.bank.app.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.ktx.Firebase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -19,13 +20,16 @@ import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.User
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import mikhail.shell.bank.app.domain.usecases.GetProfile
+import mikhail.shell.bank.app.domain.usecases.SignOut
 
 @HiltViewModel(assistedFactory = ProfileViewModel.Factory::class)
 class ProfileViewModel @AssistedInject constructor(
     @Assisted private val userid: String,
-    private val getProfile: GetProfile
+    private val getProfile: GetProfile,
+    private val _signOut: SignOut
 ) : ViewModel() {
     private val _profile = MutableStateFlow<User?>(null)
+
 
     init {
         viewModelScope.launch {
@@ -52,6 +56,8 @@ class ProfileViewModel @AssistedInject constructor(
         SharingStarted.WhileSubscribed(5000),
         ProfileScreenState()
     )
+
+    fun signOut() = _signOut()
 
     @AssistedFactory
     interface Factory {

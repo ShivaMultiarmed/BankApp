@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetCurrencies @Inject constructor(
     private val currenciesRepository: CurrenciesRepository
 ) {
-    suspend operator fun invoke() = currenciesRepository.getCurrencies()
+    operator fun invoke() = currenciesRepository.getCurrencies()
 }

@@ -15,7 +15,7 @@ import mikhail.shell.bank.app.User
 fun SettingsSection(
     navController: NavController = rememberNavController(),
     user: User = User(
-        null, "", "", ""
+        null, "", ""
     )
 ) {
     Column(modifier = Modifier.fillMaxWidth())

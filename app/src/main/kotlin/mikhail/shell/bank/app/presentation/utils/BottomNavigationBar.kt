@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -82,7 +83,7 @@ fun BottomNavigationBar(
         BottomNavigationItem.Notifications,
         BottomNavigationItem.Profile(userid)
     )
-    var selectedIcon by remember {
+    var selectedIcon by rememberSaveable {
         mutableStateOf(0)
     }
 //    val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -90,7 +91,6 @@ fun BottomNavigationBar(
 //        //it == currentBackStackEntry?.destination?.
 //    }
     NavigationBar(
-
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()

@@ -8,11 +8,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import mikhail.shell.bank.app.domain.usecases.CheckIfSignedIn
 import mikhail.shell.bank.app.domain.usecases.SignIn
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    private val checkIfSignedInUseCase: CheckIfSignedIn,
     private val signInUseCase: SignIn
 ) : ViewModel() {
     private val _flow = MutableStateFlow(SignInState())
@@ -21,6 +23,7 @@ class SignInViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(5000),
         _flow.value
     )
+    fun checkIfSignedIn() = checkIfSignedInUseCase()
     fun signIn(email: String, password: String) {
         signInUseCase(
             email,

@@ -18,7 +18,6 @@ class ProfileRepositoryWithFireStore @Inject constructor(
             User(
                 userid = it["userid"] as String,
                 name = it["name"] as String,
-                password = it["password"] as String,
                 gender = it["gender"] as String
             )
         } ?: User()

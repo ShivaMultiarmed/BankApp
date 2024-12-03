@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import mikhail.shell.bank.app.domain.models.Card
 
 interface CardsRepository {
-    suspend fun getCards(userid: String): Flow<List<Card>>
+    fun getCards(userid: String): Flow<List<Card>>
     fun createCard(
         card: Card,
         onSuccess: (Long) -> Unit,

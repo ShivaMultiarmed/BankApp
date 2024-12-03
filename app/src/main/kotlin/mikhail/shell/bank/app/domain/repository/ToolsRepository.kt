@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 import mikhail.shell.bank.app.domain.models.FinanceTool
 
 interface ToolsRepository {
-    suspend fun getRecommendedTools(userid: String): Flow<List<FinanceTool>>
+    fun getRecommendedTools(userid: String): Flow<List<FinanceTool>>
 }

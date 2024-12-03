@@ -31,7 +31,6 @@ class ProfileRepositoryWithFireStoreTests {
         val latch = CountDownLatch(1)
         var profile = User(
             name = "Miranda",
-            password =  "abcde",
             gender = "Женщина"
         )
         repository.createProfile(

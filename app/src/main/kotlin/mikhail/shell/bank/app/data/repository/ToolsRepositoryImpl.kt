@@ -17,8 +17,7 @@ import javax.inject.Inject
 class ToolsRepositoryImpl @Inject constructor(
     private val serviceApi: ServiceApi
 ) : ToolsRepository {
-    override suspend fun getRecommendedTools(userid: String): Flow<List<FinanceTool>> {
-        delay(1000)
+    override fun getRecommendedTools(userid: String): Flow<List<FinanceTool>> {
         val toolsList = listOf(
             FinanceTool("Анализ расходов", Color(18, 99, 197, 255), Icons.Rounded.Analytics),
             FinanceTool("Инвестиции", Color(122, 197, 18, 255), Icons.Rounded.Cases),
@@ -26,6 +25,7 @@ class ToolsRepositoryImpl @Inject constructor(
             FinanceTool("Кэшбэк", Color(81, 18, 197, 255), Icons.Rounded.Backspace)
         )
         return flow {
+            //delay(1000)
             emit(toolsList)
         }
     }

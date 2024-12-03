@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 import mikhail.shell.bank.app.domain.models.Currency
 
 interface CurrenciesRepository {
-    suspend fun getCurrencies(): Flow<List<Currency>>
+    fun getCurrencies(): Flow<List<Currency>>
 }

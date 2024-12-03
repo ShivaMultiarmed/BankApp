@@ -20,7 +20,7 @@ class CardsRepositoryWithFireStore @Inject constructor(
 
     private val cards = db.collection("cards")
 
-    override suspend fun getCards(userid: String): Flow<List<Card>> {
+    override fun getCards(userid: String): Flow<List<Card>> {
         val flow = MutableStateFlow(listOf<Card>())
         cards.whereEqualTo("userid", userid)
             .addSnapshotListener { list, e ->

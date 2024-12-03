@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetTools @Inject constructor (
     private val toolsRepository: ToolsRepository
 ) {
-    suspend operator fun invoke(userid: String) = toolsRepository.getRecommendedTools(userid)
+    operator fun invoke(userid: String) = toolsRepository.getRecommendedTools(userid)
 }
