@@ -1,6 +1,7 @@
 package mikhail.shell.bank.app.domain.repository
 
 import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.Error
 
 interface AuthRepository {
     fun checkIfSignedIn() : Boolean
@@ -8,7 +9,7 @@ interface AuthRepository {
         email: String,
         password: String,
         onSuccess: (String) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Error) -> Unit
     )
     fun signup(
         email: String,

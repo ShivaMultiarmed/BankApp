@@ -13,27 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="testSigningUp()">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-03T04:51:10.322512400Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCT80RRG9Y" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
       <SelectionState runConfigName="testGettingTransactionsWithDateTimeFilter()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSignIn_EmailNotFound()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testSignIn_InvalidCredentials()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="testTransferringMoney_Success()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testTransferringMoney_WrongSender()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testTransferringMoney_WrongReceiver()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testTransferringMoney_TooLargeAmount()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -11,7 +11,7 @@ interface TransactionsRepository {
         userid: String,
         from: LocalDateTime = LocalDateTime.MIN,
         to: LocalDateTime = LocalDateTime.now()
-    )  : Flow<List<Transaction>>
+    ) : Flow<List<Transaction>>
     suspend fun transferMoney (
         from: Long,
         to: Long,

@@ -56,7 +56,7 @@ sealed class BottomNavigationItem<T : Route>(
     )
 
     data object Notifications : BottomNavigationItem<Route>(
-        Route.TransactionsScreenRoute,
+        Route.TransactionsGraph,
         "Переводы",
         Icons.Rounded.Autorenew,
         4546

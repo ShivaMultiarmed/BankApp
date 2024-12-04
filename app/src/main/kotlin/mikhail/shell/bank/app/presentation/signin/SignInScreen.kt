@@ -5,6 +5,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,7 +13,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 import mikhail.shell.bank.app.Route
+import mikhail.shell.bank.app.domain.models.NetworkError
+import mikhail.shell.bank.app.domain.models.SignInError
 
 @Composable
 fun SignInScreen(
@@ -21,7 +25,7 @@ fun SignInScreen(
     navController: NavController = rememberNavController(),
     onSubmit: (String, String) -> Unit
 ) {
-    Column (
+    Column(
         modifier = modifier
     ) {
         if (state.userid != null)
@@ -46,6 +50,18 @@ fun SignInScreen(
             }
         ) {
             Text("Войти")
+        }
+        if (state.error != null) {
+            val text = when (state.error) {
+                SignInError.CREDENTIALS_INVALID -> "Неправильные e-mail и/или пароль"
+                NetworkError.NO_CONNECTION -> "Нет соединения"
+                else -> "Непредвиденная ошибка"
+            }
+            Text(text)
+        } else {
+            if (state.userid != null) {
+                Text("Вы успешно вошли")
+            }
         }
     }
 }

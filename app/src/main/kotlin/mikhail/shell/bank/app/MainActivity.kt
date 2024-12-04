@@ -6,7 +6,9 @@ import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,9 +24,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import mikhail.shell.bank.app.presentation.transactions.TransactionsScreen
 import mikhail.shell.bank.app.presentation.home.HomeScreen
 import mikhail.shell.bank.app.presentation.home.HomeViewModel
 import mikhail.shell.bank.app.presentation.profile.ProfileScreen
@@ -33,6 +37,8 @@ import mikhail.shell.bank.app.presentation.settings.AdvancedSettingsScreen
 import mikhail.shell.bank.app.presentation.settings.SettingsScreen
 import mikhail.shell.bank.app.presentation.signin.SignInScreen
 import mikhail.shell.bank.app.presentation.signin.SignInViewModel
+import mikhail.shell.bank.app.presentation.transactions.AddTransactionScreen
+import mikhail.shell.bank.app.presentation.transactions.AddTransactionViewModel
 import mikhail.shell.bank.app.presentation.utils.ApplicationScaffold
 import mikhail.shell.bank.app.presentation.utils.ErrorComponent
 import mikhail.shell.bank.app.presentation.utils.LoadingComponent
@@ -103,7 +109,13 @@ sealed class Route {
     }
 
     @Serializable
-    data object TransactionsScreenRoute : Route()
+    data object TransactionsGraph : Route() {
+        @Serializable
+        data object TransactionListRoute : Route()
+
+        @Serializable
+        data object AddTransactionRoute : Route()
+    }
 
     @Serializable
     data object WalletScreenRoute : Route()
@@ -164,11 +176,13 @@ class MainActivity : ComponentActivity() {
                     authRoutes(navController)
                     goToHome(navController)
                     goToProfile(navController)
+                    transactionGraph(navController)
                 }
             }
         }
     }
 }
+
 fun NavGraphBuilder.authRoutes(
     navController: NavController
 ) {
@@ -189,6 +203,7 @@ fun NavGraphBuilder.authRoutes(
         }
     }
 }
+
 fun NavGraphBuilder.goToHome(navController: NavController) {
     composable<Route.HomeScreenRoute> {
         val userid = getUserId()
@@ -199,7 +214,7 @@ fun NavGraphBuilder.goToHome(navController: NavController) {
                 factory.create(userid)
             }
             val screenState by homeViewModel.screenState.collectAsStateWithLifecycle()
-            ApplicationScaffold (
+            ApplicationScaffold(
                 userid = userid,
                 navController = navController
             ) { innerPadding ->
@@ -233,9 +248,8 @@ fun NavGraphBuilder.goToProfile(navController: NavController) {
                 }
             val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
             val user = screenState.user
-            if (user?.userid != null)
-            {
-                ApplicationScaffold (
+            if (user?.userid != null) {
+                ApplicationScaffold(
                     navController = navController,
                     userid = user.userid
                 ) { innerPadding ->
@@ -322,6 +336,51 @@ fun NavGraphBuilder.goToSettings(navController: NavController) {
         )
         {
             AdvancedSettingsScreen(navController)
+        }
+    }
+}
+
+fun NavGraphBuilder.transactionGraph(
+    navController: NavController
+) {
+    navigation<Route.TransactionsGraph>(
+        startDestination = Route.TransactionsGraph.TransactionListRoute::class,
+    ) {
+        composable<Route.TransactionsGraph.TransactionListRoute> {
+            val userid = getUserId()
+            if (userid == null)
+                navController.navigate(Route.SignInRoute)
+            else {
+                ApplicationScaffold(
+                    navController = navController,
+                    userid = userid
+                ) {
+                    TransactionsScreen(
+                        navController = navController
+                    )
+                }
+            }
+        }
+        composable<Route.TransactionsGraph.AddTransactionRoute> {
+            val userid = getUserId()
+            if (userid == null)
+                navController.navigate(Route.SignInRoute)
+            else {
+                val viewModel = hiltViewModel<AddTransactionViewModel>()
+                val state by viewModel.state.collectAsState()
+                ApplicationScaffold(
+                    navController = navController,
+                    userid = userid
+                ) {
+                    AddTransactionScreen(
+                        navController = navController,
+                        state = state,
+                        onSubmit = { from, to, amount ->
+                            viewModel.transferMoney(from, to, amount)
+                        }
+                    )
+                }
+            }
         }
     }
 }

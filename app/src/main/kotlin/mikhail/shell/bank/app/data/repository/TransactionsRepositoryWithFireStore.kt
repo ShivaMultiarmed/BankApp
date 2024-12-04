@@ -1,15 +1,14 @@
 package mikhail.shell.bank.app.data.repository
 
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Source
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import mikhail.shell.bank.app.data.exceptions.ReceiverNotFoundException
+import mikhail.shell.bank.app.data.exceptions.SenderNotFoundException
+import mikhail.shell.bank.app.data.exceptions.TooLargeAmountException
 import mikhail.shell.bank.app.domain.models.Result
 import mikhail.shell.bank.app.domain.models.Transaction
 import mikhail.shell.bank.app.domain.models.TransactionError
@@ -70,18 +69,19 @@ class TransactionsRepositoryWithFireStore @Inject constructor(
         val newTransactionDocRef = transactions.document()
         try {
             val t = db.runTransaction { transaction ->
-                val senderCardRef = transaction.get(senderDocRef)
-                if (!senderCardRef.exists()) {
-                    throw NoSuchElementException()
+                val senderCardSnapshot = transaction.get(senderDocRef)
+                if (!senderCardSnapshot.exists()) {
+                    throw SenderNotFoundException()
                 }
-                val senderBalance = senderCardRef.toCard().balance
+                val senderBalance = senderCardSnapshot.toCard().balance
                 if (senderBalance < amount) {
-                    throw IllegalStateException()
+                    throw TooLargeAmountException()
                 }
-                val receiverCardRef = transaction.get(receiverDocRef)
-                if (!receiverCardRef.exists())
-                    throw NoSuchElementException()
-                val receiverBalance = receiverCardRef.toCard().balance
+                val receiverCardSnapshot = transaction.get(receiverDocRef)
+                if (!receiverCardSnapshot.exists()) {
+                    throw ReceiverNotFoundException()
+                }
+                val receiverBalance = receiverCardSnapshot.toCard().balance
 
                 transaction.update(senderDocRef, "balance", senderBalance - amount)
                 transaction.update(receiverDocRef, "balance", receiverBalance + amount)
@@ -97,16 +97,15 @@ class TransactionsRepositoryWithFireStore @Inject constructor(
                 newTransaction
             }.await()
             return Result.Success(t)
-        } catch (e: Exception)
-        {
-            return Result.Failure(
-                when (e) {
-                    is IllegalStateException -> TransactionError.NOT_ENOUGH_MONEY
-                    else -> TransactionError.SENDER_NOT_FOUND
-                }
-            )
+        } catch (e: TooLargeAmountException) {
+            return Result.Failure(TransactionError.NOT_ENOUGH_MONEY)
+        } catch (e: SenderNotFoundException) {
+            return Result.Failure(TransactionError.SENDER_NOT_FOUND)
+        } catch (e: ReceiverNotFoundException) {
+            return Result.Failure(TransactionError.RECEIVER_NOT_FOUND)
+        } catch (e: Exception) {
+            return Result.Failure(TransactionError.NOT_ENOUGH_MONEY)
         }
-
     }
 }
 

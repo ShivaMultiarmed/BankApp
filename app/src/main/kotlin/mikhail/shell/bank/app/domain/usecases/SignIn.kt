@@ -1,6 +1,7 @@
 package mikhail.shell.bank.app.domain.usecases
 
 import mikhail.shell.bank.app.domain.repository.AuthRepository
+import mikhail.shell.bank.app.domain.models.Error
 import javax.inject.Inject
 
 class SignIn @Inject constructor(
@@ -10,7 +11,7 @@ class SignIn @Inject constructor(
         email: String,
         password: String,
         onSuccess: (String) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Error) -> Unit
     ) {
         authRepository.signin(email, password, onSuccess, onFailure)
     }
