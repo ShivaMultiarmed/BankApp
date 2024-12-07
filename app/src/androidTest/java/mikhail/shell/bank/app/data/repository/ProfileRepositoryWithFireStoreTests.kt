@@ -3,7 +3,7 @@ package mikhail.shell.bank.app.data.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import org.junit.Before
 import org.junit.Rule

@@ -1,11 +1,13 @@
 package mikhail.shell.bank.app.data.repository
 
-import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestore
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
+import mikhail.shell.bank.app.domain.errors.SignUpError
 import mikhail.shell.bank.app.domain.repository.AuthRepository
 import mikhail.shell.bank.app.domain.models.Error
 import mikhail.shell.bank.app.domain.models.NetworkError
@@ -48,7 +50,7 @@ class AuthRepositoryWithFireAuthentication @Inject constructor(
         password: String,
         user: User,
         onSuccess: (User) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (SignUpError) -> Unit
     ) {
         val users = db.collection("profiles")
         auth.createUserWithEmailAndPassword(email, password)
@@ -59,10 +61,22 @@ class AuthRepositoryWithFireAuthentication @Inject constructor(
                     .set(newUser)
                     .addOnSuccessListener {
                         onSuccess(newUser)
-                    }.addOnFailureListener(onFailure)
-            }.addOnFailureListener(onFailure)
+                    }.addOnFailureListener {
+                        val error = when (it) {
+                            else -> SignUpError.UNEXPECTED_ERROR
+                        }
+                        onFailure(error)
+                    }
+            }.addOnFailureListener {
+                val error = when (it) {
+                    is FirebaseAuthWeakPasswordException -> SignUpError.PASSWORD_INVALID
+                    is FirebaseAuthInvalidCredentialsException -> SignUpError.MALFORMED_EMAIL
+                    is FirebaseAuthUserCollisionException -> SignUpError.EMAIL_EXISTS
+                    else -> SignUpError.UNEXPECTED_ERROR
+                }
+                onFailure(error)
+            }
     }
-
     override fun signOut() {
         auth.signOut()
     }

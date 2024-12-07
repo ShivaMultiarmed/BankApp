@@ -1,6 +1,7 @@
 package mikhail.shell.bank.app.domain.repository
 
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
+import mikhail.shell.bank.app.domain.errors.SignUpError
 import mikhail.shell.bank.app.domain.models.Error
 
 interface AuthRepository {
@@ -16,7 +17,7 @@ interface AuthRepository {
         password: String,
         user: User,
         onSuccess: (User) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (SignUpError) -> Unit
     )
     fun signOut()
 }

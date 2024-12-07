@@ -1,6 +1,6 @@
 package mikhail.shell.bank.app.domain.repository
 
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
 
 interface ProfileRepository {
     suspend fun fetchProfile(userid: String): User

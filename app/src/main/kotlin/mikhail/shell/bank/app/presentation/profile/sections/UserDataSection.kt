@@ -7,7 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.ui.theme.spacing
 
 @Preview

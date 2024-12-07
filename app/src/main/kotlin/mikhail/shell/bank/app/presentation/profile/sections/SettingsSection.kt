@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import mikhail.shell.bank.app.Route
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
 
 @Composable
 fun SettingsSection(

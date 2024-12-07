@@ -1,16 +1,11 @@
 package mikhail.shell.bank.app.data.repository
 
-import androidx.lifecycle.Observer
-import com.google.android.gms.common.data.DataBufferObserver
-import com.google.android.gms.common.data.DataBufferObserver.Observable
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.domain.repository.AuthRepository
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule

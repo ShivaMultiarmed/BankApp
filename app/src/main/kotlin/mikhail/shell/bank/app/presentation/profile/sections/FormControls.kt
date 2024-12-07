@@ -107,8 +107,11 @@ fun SwitchingTextEdit(label: String = "Введите текст", text: String 
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview
 @Composable
-fun Dropdown(genderList: List<String> = emptyList(), value: String = "Гендер")
-{
+fun Dropdown(
+    genderList: List<String> = emptyList(),
+    value: String = "Гендер",
+    onValueChange: (String) -> Unit = {}
+) {
     var selected: String by remember {
         mutableStateOf(value)
     }
@@ -152,6 +155,7 @@ fun Dropdown(genderList: List<String> = emptyList(), value: String = "Генде
                         onClick = {
                             isExpanded = false
                             selected = gender
+                            onValueChange(gender)
                         },
                         colors = MenuDefaults.itemColors(),
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,

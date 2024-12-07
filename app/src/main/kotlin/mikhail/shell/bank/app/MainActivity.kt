@@ -6,6 +6,7 @@ import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,11 +24,12 @@ import androidx.navigation.toRoute
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.presentation.transactions.TransactionsScreen
 import mikhail.shell.bank.app.presentation.home.HomeScreen
 import mikhail.shell.bank.app.presentation.home.HomeViewModel
@@ -37,6 +39,8 @@ import mikhail.shell.bank.app.presentation.settings.AdvancedSettingsScreen
 import mikhail.shell.bank.app.presentation.settings.SettingsScreen
 import mikhail.shell.bank.app.presentation.signin.SignInScreen
 import mikhail.shell.bank.app.presentation.signin.SignInViewModel
+import mikhail.shell.bank.app.presentation.signup.SignUpScreen
+import mikhail.shell.bank.app.presentation.signup.SignUpViewModel
 import mikhail.shell.bank.app.presentation.transactions.AddTransactionScreen
 import mikhail.shell.bank.app.presentation.transactions.AddTransactionViewModel
 import mikhail.shell.bank.app.presentation.utils.ApplicationScaffold
@@ -45,14 +49,6 @@ import mikhail.shell.bank.app.presentation.utils.LoadingComponent
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
-
-@Serializable
-@Parcelize
-data class User(
-    val userid: String? = null,
-    val name: String = "",
-    val gender: String = ""
-) : Parcelable
 
 
 class AppNavType<T : Parcelable>(
@@ -88,7 +84,13 @@ class AppNavType<T : Parcelable>(
 @Serializable
 sealed class Route {
     @Serializable
-    data object SignInRoute : Route()
+    data object AuthGraph: Route()
+    {
+        @Serializable
+        data object SignInRoute : Route()
+        @Serializable
+        data object SignUpRoute: Route()
+    }
 
     @Serializable
     data object HomeScreenRoute : Route()
@@ -131,7 +133,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Route.SignInRoute,
+                    startDestination = Route.AuthGraph,
                     /*enterTransition = {
                         slideIntoContainer(
                             towards = Up,
@@ -186,29 +188,45 @@ class MainActivity : ComponentActivity() {
 fun NavGraphBuilder.authRoutes(
     navController: NavController
 ) {
-    composable<Route.SignInRoute> {
-        val viewModel = hiltViewModel<SignInViewModel>()
-        if (viewModel.checkIfSignedIn())
-            navController.navigate(Route.HomeScreenRoute)
-        else {
-            val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
-            SignInScreen(
-                modifier = Modifier.fillMaxSize(),
+    navigation<Route.AuthGraph>(
+        startDestination = Route.AuthGraph.SignInRoute::class
+    ) {
+        composable<Route.AuthGraph.SignInRoute> {
+            val viewModel = hiltViewModel<SignInViewModel>()
+            if (viewModel.checkIfSignedIn())
+                navController.navigate(Route.HomeScreenRoute)
+            else {
+                val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
+                SignInScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController,
+                    state = signInState,
+                    onSubmit = { email, password ->
+                        viewModel.signIn(email, password)
+                    }
+                )
+            }
+        }
+        composable<Route.AuthGraph.SignUpRoute> {
+            val viewModel = hiltViewModel<SignUpViewModel>()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            SignUpScreen(
                 navController = navController,
-                state = signInState,
-                onSubmit = { email, password ->
-                    viewModel.signIn(email, password)
+                state = state,
+                onSubmit = { email, password, user ->
+                    viewModel.signUp(email, password, user)
                 }
             )
         }
     }
+
 }
 
 fun NavGraphBuilder.goToHome(navController: NavController) {
     composable<Route.HomeScreenRoute> {
         val userid = getUserId()
         if (userid == null)
-            navController.navigate(Route.SignInRoute)
+            navController.navigate(Route.AuthGraph)
         else {
             val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
                 factory.create(userid)
@@ -261,7 +279,7 @@ fun NavGraphBuilder.goToProfile(navController: NavController) {
                                 innerPadding = innerPadding,
                                 onSignOutClicked = {
                                     profileViewModel.signOut()
-                                    navController.navigate(Route.SignInRoute)
+                                    navController.navigate(Route.AuthGraph.SignInRoute)
                                 }
                             )
                         } else {
@@ -349,7 +367,7 @@ fun NavGraphBuilder.transactionGraph(
         composable<Route.TransactionsGraph.TransactionListRoute> {
             val userid = getUserId()
             if (userid == null)
-                navController.navigate(Route.SignInRoute)
+                navController.navigate(Route.AuthGraph.SignInRoute)
             else {
                 ApplicationScaffold(
                     navController = navController,
@@ -364,7 +382,7 @@ fun NavGraphBuilder.transactionGraph(
         composable<Route.TransactionsGraph.AddTransactionRoute> {
             val userid = getUserId()
             if (userid == null)
-                navController.navigate(Route.SignInRoute)
+                navController.navigate(Route.AuthGraph.SignInRoute)
             else {
                 val viewModel = hiltViewModel<AddTransactionViewModel>()
                 val state by viewModel.state.collectAsState()

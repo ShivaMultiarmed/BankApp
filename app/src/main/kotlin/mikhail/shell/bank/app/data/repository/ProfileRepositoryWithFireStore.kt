@@ -2,7 +2,7 @@ package mikhail.shell.bank.app.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import mikhail.shell.bank.app.User
+import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import javax.inject.Inject
 
