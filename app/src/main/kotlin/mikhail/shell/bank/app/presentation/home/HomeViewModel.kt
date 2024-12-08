@@ -1,6 +1,7 @@
 package mikhail.shell.bank.app.presentation.home
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -32,39 +33,18 @@ class HomeViewModel @AssistedInject constructor(
     private val getToolsUseCase: GetTools,
     private val getCurrenciesUseCase: GetCurrencies
 ) : ViewModel() {
-    private val _cards = MutableStateFlow(DEFAULT_CARDS)
-
-    private val _currencies = MutableStateFlow(DEFAULT_CURRENCIES)
-
-    private val _tools = MutableStateFlow(DEFAULT_TOOLS)
-
-    private var _balance by mutableStateOf(0.0)
-
-    init {
-        viewModelScope.launch {
-            launch {
-                collectFlow(getCardsUseCase(userid), _cards, DEFAULT_CARDS)
-            }
-            launch {
-                collectFlow(getToolsUseCase(userid), _tools, DEFAULT_TOOLS)
-            }
-            launch {
-                collectFlow(getCurrenciesUseCase(), _currencies, DEFAULT_CURRENCIES)
-            }
-        }
-    }
+    private val _cards = getCardsUseCase(userid).asStateFlow(DEFAULT_CARDS)
+    private val _currencies = getCurrenciesUseCase().asStateFlow(DEFAULT_CURRENCIES)
+    private val _tools = getToolsUseCase(userid).asStateFlow(DEFAULT_TOOLS)
 
     val screenState = combine(_cards, _currencies, _tools) { cards, currencies, tools ->
-            _balance = evaluateBalanceUseCase(cards)
-            HomeScreenState(cards, _balance, tools, currencies)
-        }
-        .catch {
-            HomeScreenState(_cards.value, _balance, _tools.value, _currencies.value)
-        }
-        .asStateFlow(
-            initialVal = HomeScreenState(_cards.value, _balance, _tools.value, _currencies.value)
+            val balance = evaluateBalanceUseCase(cards)
+            HomeScreenState(cards, balance, tools, currencies)
+        }.catch {
+            emit(HomeScreenState(_cards.value, evaluateBalanceUseCase(_cards.value), _tools.value, _currencies.value))
+        }.asStateFlow(
+            initialVal = HomeScreenState(_cards.value, evaluateBalanceUseCase(_cards.value), _tools.value, _currencies.value)
         )
-
     @AssistedFactory
     interface Factory {
         fun create(userid: String): HomeViewModel
@@ -82,16 +62,4 @@ class HomeViewModel @AssistedInject constructor(
         SharingStarted.WhileSubscribed(SUBSCRIPTION_DURATION),
         initialVal
     )
-
-    private suspend fun <T> collectFlow(
-        useCaseFlow: Flow<T>,
-        viewModelFlow: MutableStateFlow<T>,
-        defaultValue: T
-    ) {
-        useCaseFlow.catch {
-            viewModelFlow.emit(defaultValue)
-        }.collect {
-            viewModelFlow.emit(it)
-        }
-    }
 }

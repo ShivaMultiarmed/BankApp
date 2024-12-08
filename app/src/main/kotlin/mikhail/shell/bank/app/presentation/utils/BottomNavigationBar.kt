@@ -104,11 +104,11 @@ fun BottomNavigationBar(
                     onClick = {
                         selectedIcon = i
                         navController.navigate(item.route)
-                        {
-                            popUpTo(navController.graph.findStartDestination().id)
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+//                        {
+//                            popUpTo(navController.graph.findStartDestination().id)
+//                            launchSingleTop = true
+//                            restoreState = true
+//                        }
                     },
                     colors = NavigationBarItemDefaults.colors(
 //                        unselectedIconColor = Color.Cyan,

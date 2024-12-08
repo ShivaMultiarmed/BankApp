@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +41,7 @@ import mikhail.shell.bank.app.presentation.profile.ProfileViewModel
 import mikhail.shell.bank.app.presentation.settings.AdvancedSettingsScreen
 import mikhail.shell.bank.app.presentation.settings.SettingsScreen
 import mikhail.shell.bank.app.presentation.signin.SignInScreen
+import mikhail.shell.bank.app.presentation.signin.SignInState
 import mikhail.shell.bank.app.presentation.signin.SignInViewModel
 import mikhail.shell.bank.app.presentation.signup.SignUpScreen
 import mikhail.shell.bank.app.presentation.signup.SignUpViewModel
@@ -84,41 +88,33 @@ class AppNavType<T : Parcelable>(
 @Serializable
 sealed class Route {
     @Serializable
-    data object AuthGraph: Route()
-    {
+    data object AuthGraph : Route() {
         @Serializable
         data object SignInRoute : Route()
         @Serializable
-        data object SignUpRoute: Route()
+        data object SignUpRoute : Route()
     }
-
     @Serializable
     data object HomeScreenRoute : Route()
-
     @Serializable
     data object ProfileGraphRoute : Route() {
         @Serializable
         data class ProfileScreenRoute(val userid: String) : Route()
-
         @Serializable
         data object SettingsGraphRoute : Route() {
             @Serializable
             data object SettingsScreenRoute : Route()
-
             @Serializable
             data object AdvancedSettingsRoute : Route()
         }
     }
-
     @Serializable
     data object TransactionsGraph : Route() {
         @Serializable
         data object TransactionListRoute : Route()
-
         @Serializable
         data object AddTransactionRoute : Route()
     }
-
     @Serializable
     data object WalletScreenRoute : Route()
 }
@@ -130,7 +126,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             BankAppTheme {
-
                 NavHost(
                     navController = navController,
                     startDestination = Route.AuthGraph,
@@ -193,18 +188,21 @@ fun NavGraphBuilder.authRoutes(
     ) {
         composable<Route.AuthGraph.SignInRoute> {
             val viewModel = hiltViewModel<SignInViewModel>()
-            if (viewModel.checkIfSignedIn())
-                navController.navigate(Route.HomeScreenRoute)
-            else {
-                val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
-                SignInScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    navController = navController,
-                    state = signInState,
-                    onSubmit = { email, password ->
-                        viewModel.signIn(email, password)
-                    }
-                )
+            val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
+            var isFirstTimeLaunched by remember { mutableStateOf(true) }
+            SignInScreen(
+                modifier = Modifier.fillMaxSize(),
+                navController = navController,
+                state = signInState,
+                onSubmit = { email, password ->
+                    viewModel.signIn(email,password)
+                }
+            )
+            LaunchedEffect(viewModel.checkIfSignedIn()) {
+                if (viewModel.checkIfSignedIn() && isFirstTimeLaunched) {
+                    isFirstTimeLaunched = false
+                    navController.navigate(Route.ProfileGraphRoute.ProfileScreenRoute(userid = getUserId()?:""))
+                }
             }
         }
         composable<Route.AuthGraph.SignUpRoute> {
@@ -224,28 +222,25 @@ fun NavGraphBuilder.authRoutes(
 
 fun NavGraphBuilder.goToHome(navController: NavController) {
     composable<Route.HomeScreenRoute> {
-        val userid = getUserId()
-        if (userid == null)
-            navController.navigate(Route.AuthGraph)
-        else {
-            val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
-                factory.create(userid)
-            }
-            val screenState by homeViewModel.screenState.collectAsStateWithLifecycle()
-            ApplicationScaffold(
-                userid = userid,
-                navController = navController
-            ) { innerPadding ->
-                HomeScreen(
-                    navController = navController,
-                    cards = screenState.cards,
-                    balance = screenState.balance,
-                    currencies = screenState.currencies,
-                    tools = screenState.tools,
-                    innerPadding = innerPadding
-                )
-            }
+        val userid = getUserId() ?: ""
+        val homeViewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { factory ->
+            factory.create(userid)
         }
+        val screenState by homeViewModel.screenState.collectAsStateWithLifecycle()
+        ApplicationScaffold(
+            userid = userid,
+            navController = navController
+        ) { innerPadding ->
+            HomeScreen(
+                navController = navController,
+                cards = screenState.cards,
+                balance = screenState.balance,
+                currencies = screenState.currencies,
+                tools = screenState.tools,
+                innerPadding = innerPadding
+            )
+        }
+
     }
 }
 

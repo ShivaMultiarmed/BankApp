@@ -21,7 +21,7 @@ class CurrenciesRepositoryImpl @Inject constructor(
         Currency("GBP", Icons.Rounded.CurrencyPound, 105.0, 107.0),
     )
     override fun getCurrencies(): Flow<List<Currency>> = flow {
-        //delay(2000)
+        delay(1000)
         emit(currencies)
     }
 }

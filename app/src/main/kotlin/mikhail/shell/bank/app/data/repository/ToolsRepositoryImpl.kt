@@ -25,7 +25,7 @@ class ToolsRepositoryImpl @Inject constructor(
             FinanceTool("Кэшбэк", Color(81, 18, 197, 255), Icons.Rounded.Backspace)
         )
         return flow {
-            //delay(1000)
+            delay(2000)
             emit(toolsList)
         }
     }

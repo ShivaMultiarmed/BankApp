@@ -30,7 +30,10 @@ class SignInViewModel @Inject constructor(
         _flow.value
     )
     fun checkIfSignedIn() = checkIfSignedInUseCase()
-    fun signIn(email: String, password: String) {
+    fun signIn(
+        email: String,
+        password: String
+    ) {
         signInUseCase(
             email,
             password,

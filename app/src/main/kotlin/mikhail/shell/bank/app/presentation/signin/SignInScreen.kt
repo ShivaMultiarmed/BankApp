@@ -29,8 +29,7 @@ fun SignInScreen(
     Column(
         modifier = modifier
     ) {
-        if (state.userid != null)
-            navController.navigate(Route.HomeScreenRoute)
+
         var email by remember { mutableStateOf("mikhail.shell@yandex.ru") }
         var password by remember { mutableStateOf("abcdef") }
         TextField(
