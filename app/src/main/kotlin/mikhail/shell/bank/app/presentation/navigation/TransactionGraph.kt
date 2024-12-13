@@ -28,7 +28,8 @@ fun NavGraphBuilder.transactionGraph(
             else {
                 ApplicationScaffold(
                     navController = navController,
-                    primaryNavigationItem = BottomNavigationItem.Transactions
+                    primaryNavigationItem = BottomNavigationItem.Transactions,
+                    title = "Транзакции"
                 ) {
                     TransactionsScreen(
                         navController = navController

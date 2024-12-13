@@ -13,14 +13,16 @@ import mikhail.shell.bank.app.presentation.navigation.Route
 fun ApplicationScaffold(
     navController: NavController = rememberNavController(),
     primaryNavigationItem: BottomNavigationItem<Route> = BottomNavigationItem.Home,
+    title: String = "Banking App",
     content: @Composable (PaddingValues) -> Unit
-)
-{
+) {
     Scaffold(
         modifier = Modifier.Companion
             .fillMaxSize(),
         topBar = {
-            TopBar()
+            TopBar(
+                title = title
+            )
         },
         bottomBar = {
             BottomNavigationBar(

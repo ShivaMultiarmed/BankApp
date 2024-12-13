@@ -38,7 +38,8 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
             if (user?.userid != null) {
                 ApplicationScaffold(
                     navController = navController,
-                    primaryNavigationItem = BottomNavigationItem.Profile(user.userid)
+                    primaryNavigationItem = BottomNavigationItem.Profile(user.userid),
+                    title = "Профиль"
                 ) { innerPadding ->
                     if (!screenState.isLoading) {
                         if (user != null) {
