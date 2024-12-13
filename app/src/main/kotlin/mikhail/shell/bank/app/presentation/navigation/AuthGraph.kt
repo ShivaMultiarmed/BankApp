@@ -18,6 +18,7 @@ import mikhail.shell.bank.app.presentation.signin.SignInScreen
 import mikhail.shell.bank.app.presentation.signin.SignInViewModel
 import mikhail.shell.bank.app.presentation.signup.SignUpScreen
 import mikhail.shell.bank.app.presentation.signup.SignUpViewModel
+import mikhail.shell.bank.app.sharedpreferences.getUserId
 import mikhail.shell.bank.app.sharedpreferences.setUserId
 
 fun NavGraphBuilder.authGraph(
@@ -27,10 +28,10 @@ fun NavGraphBuilder.authGraph(
         startDestination = Route.AuthGraph.SignInRoute::class
     ) {
         composable<Route.AuthGraph.SignInRoute> {
-            val context = LocalContext.current
             val viewModel = hiltViewModel<SignInViewModel>()
             val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
             var isFirstTimeLaunched by remember { mutableStateOf(true) }
+            val context = LocalContext.current
             SignInScreen(
                 modifier = Modifier.fillMaxSize(),
                 navController = navController,
@@ -39,15 +40,17 @@ fun NavGraphBuilder.authGraph(
                     viewModel.signIn(email, password)
                 }
             )
-            if (viewModel.checkIfSignedIn() && isFirstTimeLaunched) {
-                isFirstTimeLaunched = false
-                navController.navigate(Route.HomeScreenRoute) {
-                    popUpTo<Route.AuthGraph.SignInRoute> {
-                        inclusive = true
+            if (context.getUserId() != null || signInState.userid != null) {
+                if (isFirstTimeLaunched) {
+                    if (context.getUserId() == null)
+                        context.setUserId(signInState.userid!!)
+                    isFirstTimeLaunched = false
+                    navController.navigate(Route.HomeScreenRoute) {
+                        popUpTo<Route.AuthGraph.SignInRoute> {
+                            inclusive = true
+                        }
                     }
                 }
-                if (signInState.userid != null)
-                    setUserId(signInState.userid!!)
             }
         }
         composable<Route.AuthGraph.SignUpRoute> {

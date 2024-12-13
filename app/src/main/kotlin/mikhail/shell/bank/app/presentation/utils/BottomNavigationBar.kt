@@ -20,19 +20,21 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import mikhail.shell.bank.app.presentation.navigation.Route
+import mikhail.shell.bank.app.sharedpreferences.getUserId
 
 sealed class BottomNavigationItem<T : Route>(
     val route: T,
@@ -52,7 +54,7 @@ sealed class BottomNavigationItem<T : Route>(
         Icons.Rounded.AccountBalanceWallet
     )
 
-    data object Notifications : BottomNavigationItem<Route>(
+    data object Transactions : BottomNavigationItem<Route>(
         Route.TransactionsGraph,
         "Переводы",
         Icons.Rounded.Autorenew,
@@ -67,21 +69,20 @@ sealed class BottomNavigationItem<T : Route>(
     )
 }
 
-
-//@Preview
 @Composable
 fun BottomNavigationBar(
     navController: NavController = rememberNavController(),
-    userid: String
+    primaryItem: BottomNavigationItem<Route> = BottomNavigationItem.Home
 ) {
+    val userid = LocalContext.current.getUserId()?:""
     val items = listOf(
         BottomNavigationItem.Home,
         BottomNavigationItem.Wallet,
-        BottomNavigationItem.Notifications,
+        BottomNavigationItem.Transactions,
         BottomNavigationItem.Profile(userid)
     )
     var selectedIcon by rememberSaveable {
-        mutableStateOf(0)
+        mutableIntStateOf(items.indexOf(primaryItem))
     }
 //    val currentBackStackEntry by navController.currentBackStackEntryAsState()
 //    val selectedItemNumber = items.indexOfFirst {
@@ -111,11 +112,7 @@ fun BottomNavigationBar(
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
-//                        unselectedIconColor = Color.Cyan,
-//                        selectedIconColor = Color.Blue,
                         indicatorColor = Color.Transparent,
-//                        selectedTextColor = Color.Green,
-//                        unselectedTextColor = Color.Yellow
                     ),
                     icon = {
                         if (item.count > 0) {

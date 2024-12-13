@@ -7,11 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import mikhail.shell.bank.app.presentation.navigation.Route
 
 @Composable
 fun ApplicationScaffold(
     navController: NavController = rememberNavController(),
-    userid: String,
+    primaryNavigationItem: BottomNavigationItem<Route> = BottomNavigationItem.Home,
     content: @Composable (PaddingValues) -> Unit
 )
 {
@@ -22,7 +23,10 @@ fun ApplicationScaffold(
             TopBar()
         },
         bottomBar = {
-            BottomNavigationBar(navController, userid)
+            BottomNavigationBar(
+                navController = navController,
+                primaryItem = primaryNavigationItem
+            )
         }
     ) { innerPadding ->
         content(innerPadding)

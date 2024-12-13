@@ -2,6 +2,7 @@ package mikhail.shell.bank.app.presentation.navigation
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +13,7 @@ import mikhail.shell.bank.app.presentation.transactions.AddTransactionScreen
 import mikhail.shell.bank.app.presentation.transactions.AddTransactionViewModel
 import mikhail.shell.bank.app.presentation.transactions.TransactionsScreen
 import mikhail.shell.bank.app.presentation.utils.ApplicationScaffold
+import mikhail.shell.bank.app.presentation.utils.BottomNavigationItem
 
 fun NavGraphBuilder.transactionGraph(
     navController: NavController
@@ -20,13 +22,13 @@ fun NavGraphBuilder.transactionGraph(
         startDestination = Route.TransactionsGraph.TransactionListRoute::class,
     ) {
         composable<Route.TransactionsGraph.TransactionListRoute> {
-            val userid = getUserId()
+            val userid = LocalContext.current.getUserId()
             if (userid == null)
                 navController.navigate(Route.AuthGraph.SignInRoute)
             else {
                 ApplicationScaffold(
                     navController = navController,
-                    userid = userid
+                    primaryNavigationItem = BottomNavigationItem.Transactions
                 ) {
                     TransactionsScreen(
                         navController = navController
@@ -35,7 +37,7 @@ fun NavGraphBuilder.transactionGraph(
             }
         }
         composable<Route.TransactionsGraph.AddTransactionRoute> {
-            val userid = getUserId()
+            val userid = LocalContext.current.getUserId()
             if (userid == null)
                 navController.navigate(Route.AuthGraph.SignInRoute)
             else {
@@ -43,7 +45,7 @@ fun NavGraphBuilder.transactionGraph(
                 val state by viewModel.state.collectAsState()
                 ApplicationScaffold(
                     navController = navController,
-                    userid = userid
+                    primaryNavigationItem = BottomNavigationItem.Transactions
                 ) {
                     AddTransactionScreen(
                         navController = navController,

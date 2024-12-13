@@ -3,6 +3,7 @@ package mikhail.shell.bank.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -11,6 +12,8 @@ import mikhail.shell.bank.app.presentation.navigation.authGraph
 import mikhail.shell.bank.app.presentation.navigation.homeRoutes
 import mikhail.shell.bank.app.presentation.navigation.profileGraph
 import mikhail.shell.bank.app.presentation.navigation.transactionGraph
+import mikhail.shell.bank.app.sharedpreferences.getUserId
+import mikhail.shell.bank.app.sharedpreferences.removeUserId
 import mikhail.shell.bank.app.ui.theme.BankAppTheme
 
 

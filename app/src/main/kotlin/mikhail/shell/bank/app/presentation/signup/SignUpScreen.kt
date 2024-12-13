@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
@@ -19,6 +20,7 @@ import mikhail.shell.bank.app.presentation.navigation.Route
 import mikhail.shell.bank.app.domain.errors.SignUpError
 import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.presentation.profile.sections.Dropdown
+import mikhail.shell.bank.app.sharedpreferences.setUserId
 
 @Composable
 fun SignUpScreen(
@@ -26,6 +28,7 @@ fun SignUpScreen(
     state: SignUpState = SignUpState(),
     onSubmit: (String, String, User) -> Unit
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -90,6 +93,7 @@ fun SignUpScreen(
             Text("Вы успешно зарегистрировались")
             LaunchedEffect(true) {
                 delay(1000)
+                context.setUserId(state.userid)
                 navController.navigate(Route.HomeScreenRoute)
             }
         }

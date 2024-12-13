@@ -137,32 +137,3 @@ fun ProfileScreen(
 
 
 }
-
-
-//fun getCardSaver(): Saver<List<Card>, List<Map<String, Any>>>
-//{
-//    val cardSaver = Saver<Card, Map<String, Any>>(
-//        save = {
-//            mapOf(
-//                "system" to it.system.name,
-//                "type" to it.type.name,
-//                "number" to it.number,
-//                "balance" to it.balance
-//            )
-//        },
-//        restore = {
-//            Card(
-//                system = CardSystem.valueOf(it["system"] as String),
-//                type = CardType.valueOf(it["type"] as String),
-//                number = it["number"] as String,
-//                balance = it["balance"] as Double
-//            )
-//        }
-//    )
-//
-//    val cardListSaver = Saver<List<Card>, List<Map<String, Any>>>(
-//        save = { list -> list.map { cardSaver.save(it) } },
-//        restore = { list -> list.map { cardSaver.restore(it) } }
-//    )
-//    return cardListSaver
-//}
