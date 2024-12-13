@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import mikhail.shell.bank.app.Route
+import mikhail.shell.bank.app.presentation.navigation.Route
 
 sealed class BottomNavigationItem<T : Route>(
     val route: T,
@@ -104,11 +104,11 @@ fun BottomNavigationBar(
                     onClick = {
                         selectedIcon = i
                         navController.navigate(item.route)
-//                        {
-//                            popUpTo(navController.graph.findStartDestination().id)
-//                            launchSingleTop = true
-//                            restoreState = true
-//                        }
+                        {
+                            popUpTo(navController.graph.findStartDestination().id)
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     },
                     colors = NavigationBarItemDefaults.colors(
 //                        unselectedIconColor = Color.Cyan,

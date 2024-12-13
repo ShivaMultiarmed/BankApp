@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import mikhail.shell.bank.app.Route
+import mikhail.shell.bank.app.presentation.navigation.Route
 
 @Composable
 fun TransactionsScreen(

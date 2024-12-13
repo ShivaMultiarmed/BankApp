@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import mikhail.shell.bank.app.Route
+import mikhail.shell.bank.app.presentation.navigation.Route
 import mikhail.shell.bank.app.domain.models.User
 
 @Composable
