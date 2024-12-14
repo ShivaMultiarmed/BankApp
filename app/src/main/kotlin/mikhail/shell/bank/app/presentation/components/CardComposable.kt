@@ -28,14 +28,14 @@ import mikhail.shell.bank.app.R
 import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.domain.models.CardSystem.MASTERCARD
 import mikhail.shell.bank.app.domain.models.CardSystem.VISA
+import java.util.regex.Pattern
 
 //@Preview
 @Composable
 fun CardComposable(
     card: Card,
     onClick: () -> Unit = {}
-)
-{
+) {
     val image = painterResource(
         when (card.system)
         {
@@ -83,10 +83,16 @@ fun CardComposable(
                 )
                 Text(text = card.type.purpose, color = Color.White, fontSize = 12.sp)
             }
-            Text(text = "₽ ${card.balance}", color = Color.White, fontSize = 18.sp)
-            Text(text = card.number.toString(), color = Color.White, fontSize = 16.sp)
+            Text(text = "₽ ${card.balance.toDisplayableBalance()}", color = Color.White, fontSize = 18.sp)
+            Text(text = card.cardNumberToString(), color = Color.White, fontSize = 16.sp)
         }
     }
 }
+
+fun Card.cardNumberToString() = number.toString()
+    .replace(Regex("(\\d{4})(?=\\d)"), "$1 ")
+    .trim()
+
+fun Double.toDisplayableBalance() = String.format("%.2f", this)
 
 fun gradient(start: Color, end: Color) = Brush.horizontalGradient(listOf(start, end))

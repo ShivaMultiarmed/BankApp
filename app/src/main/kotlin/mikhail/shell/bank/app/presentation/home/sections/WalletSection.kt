@@ -22,13 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import mikhail.shell.bank.app.presentation.components.toDisplayableBalance
 
 @Preview
 @Composable
 fun WalletSection(
     balance: Double = 0.0
-)
-{
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,7 +46,7 @@ fun WalletSection(
             horizontalAlignment = Alignment.Start
         ) {
             Text(text = "Баланс", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onBackground)
-            Text(text = "₽ $balance", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+            Text(text = "₽ ${balance.toDisplayableBalance()}", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         }
         Box(
             modifier = Modifier

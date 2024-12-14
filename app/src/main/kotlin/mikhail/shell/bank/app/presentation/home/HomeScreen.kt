@@ -33,7 +33,6 @@ fun HomeScreen(
     currencies: List<Currency> = listOf(),
     innerPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-
     val scrollState = rememberScrollState()
     Column (
         modifier = Modifier.Companion

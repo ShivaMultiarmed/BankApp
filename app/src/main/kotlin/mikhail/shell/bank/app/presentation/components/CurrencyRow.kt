@@ -16,8 +16,9 @@ import androidx.compose.ui.unit.sp
 import mikhail.shell.bank.app.domain.models.Currency
 
 @Composable
-fun CurrencyRow(currency: Currency)
-{
+fun CurrencyRow(
+    currency: Currency
+) {
     val colWidth = 60.dp
     val fontSize = 14.sp
     Row(
@@ -35,11 +36,11 @@ fun CurrencyRow(currency: Currency)
         }
         Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
         {
-            Text(text = "${currency.buy} ₽", fontSize = fontSize)
+            Text(text = "${currency.buy.toDisplayableBalance()} ₽", fontSize = fontSize)
         }
         Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
         {
-            Text(text = "${currency.sell} ₽", fontSize = fontSize)
+            Text(text = "${currency.sell.toDisplayableBalance()} ₽", fontSize = fontSize)
         }
     }
 }
