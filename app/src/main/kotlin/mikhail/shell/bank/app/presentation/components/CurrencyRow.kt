@@ -30,17 +30,32 @@ fun CurrencyRow(
         horizontalArrangement = Arrangement.SpaceAround
     )
     {
-        Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
-        {
-            Text(text = currency.name, fontSize = fontSize)
+        Box(
+            modifier = Modifier.width(colWidth),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = currency.name,
+                fontSize = fontSize
+            )
         }
-        Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
-        {
-            Text(text = "${currency.buy.toDisplayableBalance()} ₽", fontSize = fontSize)
+        Box(
+            modifier = Modifier.width(colWidth),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${currency.buy.toDisplayableBalance()} ₽",
+                fontSize = fontSize
+            )
         }
-        Box(modifier = Modifier.width(colWidth), contentAlignment = Alignment.Center)
-        {
-            Text(text = "${currency.sell.toDisplayableBalance()} ₽", fontSize = fontSize)
+        Box(
+            modifier = Modifier.width(colWidth),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${currency.sell.toDisplayableBalance()} ₽",
+                fontSize = fontSize
+            )
         }
     }
 }

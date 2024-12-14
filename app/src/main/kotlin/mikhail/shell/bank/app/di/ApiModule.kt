@@ -1,5 +1,6 @@
 package mikhail.shell.bank.app.di
 
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,12 +11,16 @@ import mikhail.shell.bank.app.data.remote.ProfileApi
 import mikhail.shell.bank.app.data.remote.ServiceApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
+    @Provides
+    @Singleton
+    fun providesGsonConverterFactory() = GsonConverterFactory.create(Gson())
     @Provides
     @Singleton
     fun provideHttpClient() = OkHttpClient()
@@ -38,5 +43,10 @@ object ApiModule {
     fun providesServicesApi(retrofit: Retrofit) = retrofit.create<ServiceApi>()
     @Provides
     @Singleton
-    fun providesCurrenciesApi(retrofit: Retrofit) = retrofit.create<CurrenciesApi>()
+    fun providesCurrenciesApi(retrofit: Retrofit) = Retrofit.Builder()
+        .client(provideHttpClient())
+        .baseUrl("https://v6.exchangerate-api.com/v6/")
+        .addConverterFactory(providesGsonConverterFactory())
+        .build()
+        .create<CurrenciesApi>()
 }
