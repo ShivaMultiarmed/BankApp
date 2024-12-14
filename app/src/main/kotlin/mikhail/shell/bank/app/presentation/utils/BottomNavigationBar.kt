@@ -81,7 +81,10 @@ fun BottomNavigationBar(
         BottomNavigationItem.Transactions,
         BottomNavigationItem.Profile(userid)
     )
-    var selectedIcon by rememberSaveable {
+//    var selectedIcon by rememberSaveable {
+//        mutableIntStateOf(items.indexOf(primaryItem))
+//    }
+    val selectedIcon by rememberSaveable {
         mutableIntStateOf(items.indexOf(primaryItem))
     }
 //    val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -103,10 +106,11 @@ fun BottomNavigationBar(
                 NavigationBarItem(
                     selected = selectedIcon == i,
                     onClick = {
-                        selectedIcon = i
-                        navController.navigate(item.route)
-                        {
-                            popUpTo(navController.graph.findStartDestination().id)
+                        // selectedIcon = i
+                        navController.navigate(item.route) {
+//                            popUpTo(navController.graph.findStartDestination().id) {
+//                                // inclusive = true
+//                            }
                             launchSingleTop = true
                             restoreState = true
                         }

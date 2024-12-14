@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -26,6 +27,7 @@ object ApiModule {
     fun provideHttpClient() = OkHttpClient()
     @Provides
     @Singleton
+    @ApplicationRetrofit
     fun provideRetrofit(
         httpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
@@ -34,19 +36,38 @@ object ApiModule {
         .build()
     @Provides
     @Singleton
-    fun provideCardsApi(retrofit: Retrofit)= retrofit.create<CardsApi>()
+    fun provideCardsApi(
+        @ApplicationRetrofit retrofit: Retrofit
+    ) = retrofit.create<CardsApi>()
     @Provides
     @Singleton
-    fun providesProfileApi(retrofit: Retrofit) = retrofit.create<ProfileApi>()
+    fun providesProfileApi(
+        @ApplicationRetrofit retrofit: Retrofit
+    ) = retrofit.create<ProfileApi>()
     @Provides
     @Singleton
-    fun providesServicesApi(retrofit: Retrofit) = retrofit.create<ServiceApi>()
+    fun providesServicesApi(
+        @ApplicationRetrofit retrofit: Retrofit
+    ) = retrofit.create<ServiceApi>()
     @Provides
     @Singleton
-    fun providesCurrenciesApi(retrofit: Retrofit) = Retrofit.Builder()
+    @CurrenciesRetrofit
+    fun providesCurrenciesRetrofit() = Retrofit.Builder()
         .client(provideHttpClient())
         .baseUrl("https://v6.exchangerate-api.com/v6/")
         .addConverterFactory(providesGsonConverterFactory())
         .build()
-        .create<CurrenciesApi>()
+    @Provides
+    @Singleton
+    fun providesCurrenciesApi(
+        @CurrenciesRetrofit retrofit: Retrofit
+    ) = retrofit.create<CurrenciesApi>()
 }
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CurrenciesRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ApplicationRetrofit

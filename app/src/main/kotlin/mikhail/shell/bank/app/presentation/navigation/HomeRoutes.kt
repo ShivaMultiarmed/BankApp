@@ -1,5 +1,6 @@
 package mikhail.shell.bank.app.presentation.navigation
 
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,10 +28,7 @@ fun NavGraphBuilder.homeRoutes(navController: NavController) {
         ) { innerPadding ->
             HomeScreen(
                 navController = navController,
-                cards = screenState.cards,
-                balance = screenState.balance,
-                currencies = screenState.currencies,
-                tools = screenState.tools,
+                state = screenState,
                 innerPadding = innerPadding
             )
         }
