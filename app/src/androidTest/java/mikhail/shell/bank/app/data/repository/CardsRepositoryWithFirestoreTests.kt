@@ -1,12 +1,9 @@
 package mikhail.shell.bank.app.data.repository
 
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.domain.repository.CardsRepository
 import org.junit.Assert

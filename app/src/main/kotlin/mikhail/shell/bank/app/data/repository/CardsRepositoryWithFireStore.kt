@@ -4,8 +4,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import mikhail.shell.bank.app.domain.errors.CardError
 import mikhail.shell.bank.app.domain.models.Card
 import mikhail.shell.bank.app.domain.models.CardSystem
 import mikhail.shell.bank.app.domain.models.CardType
@@ -36,15 +36,18 @@ class CardsRepositoryWithFireStore @Inject constructor(
     override fun createCard(
         card: Card,
         onSuccess: (Long) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (CardError) -> Unit
     ) {
         val number = createRandomNumber()
         cards.document(number.toString())
             .set(card.copy(number = number))
             .addOnSuccessListener {
                 onSuccess(number)
-            }.addOnFailureListener { e ->
-                onFailure(e)
+            }.addOnFailureListener { exception ->
+                val error = when (exception) {
+                    else -> CardError.UNEXPECTED_ERROR
+                }
+                onFailure(error)
             }
     }
 
@@ -55,28 +58,34 @@ class CardsRepositoryWithFireStore @Inject constructor(
     override fun updateCard(
         card: Card,
         onSuccess: (Card) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (CardError) -> Unit
     ) {
         cards.document(card.number.toString())
             .set(card)
             .addOnSuccessListener {
                 onSuccess(card)
-            }.addOnFailureListener { e ->
-                onFailure(e)
+            }.addOnFailureListener { exception ->
+                val error = when (exception) {
+                    else -> CardError.UNEXPECTED_ERROR
+                }
+                onFailure(error)
             }
     }
 
     override fun deleteCard(
         cardNumber: Long,
         onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (CardError) -> Unit
     ) {
         cards.document(cardNumber.toString())
             .delete()
             .addOnSuccessListener {
                 onSuccess()
-            }.addOnFailureListener { e ->
-                onFailure(e)
+            }.addOnFailureListener { exception ->
+                val error = when (exception) {
+                    else -> CardError.UNEXPECTED_ERROR
+                }
+                onFailure(error)
             }
     }
 

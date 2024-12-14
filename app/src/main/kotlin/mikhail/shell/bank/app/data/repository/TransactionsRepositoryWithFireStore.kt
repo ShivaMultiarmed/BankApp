@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
+import mikhail.shell.bank.app.data.exceptions.AmountLessThanZeroException
 import mikhail.shell.bank.app.data.exceptions.ReceiverNotFoundException
 import mikhail.shell.bank.app.data.exceptions.SenderNotFoundException
 import mikhail.shell.bank.app.data.exceptions.TooLargeAmountException
@@ -69,6 +70,8 @@ class TransactionsRepositoryWithFireStore @Inject constructor(
         val newTransactionDocRef = transactions.document()
         try {
             val t = db.runTransaction { transaction ->
+                if (amount < 0)
+                    throw AmountLessThanZeroException()
                 val senderCardSnapshot = transaction.get(senderDocRef)
                 if (!senderCardSnapshot.exists()) {
                     throw SenderNotFoundException()
@@ -97,6 +100,8 @@ class TransactionsRepositoryWithFireStore @Inject constructor(
                 newTransaction
             }.await()
             return Result.Success(t)
+        } catch (e: AmountLessThanZeroException) {
+          return Result.Failure(TransactionError.AMOUNT_LESS_THAT_ZERO)
         } catch (e: TooLargeAmountException) {
             return Result.Failure(TransactionError.NOT_ENOUGH_MONEY)
         } catch (e: SenderNotFoundException) {

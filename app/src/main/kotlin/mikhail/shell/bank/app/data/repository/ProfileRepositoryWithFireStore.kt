@@ -2,6 +2,7 @@ package mikhail.shell.bank.app.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import mikhail.shell.bank.app.domain.errors.ProfileError
 import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class ProfileRepositoryWithFireStore @Inject constructor(
     override fun createProfile(
         user: User,
         onSuccess: (String) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (ProfileError) -> Unit
     ) {
 //        val document = users.document()
 //        document.set(user.copy(userid = document.id)).await()
@@ -40,8 +41,11 @@ class ProfileRepositoryWithFireStore @Inject constructor(
                     }.addOnFailureListener { e ->
                         throw e
                     }
-            }.addOnFailureListener {
-                onFailure(it)
+            }.addOnFailureListener { exception ->
+                val error = when(exception) {
+                    else -> ProfileError.UNEXPECTED_ERROR
+                }
+                onFailure(error)
             }
     }
 }
