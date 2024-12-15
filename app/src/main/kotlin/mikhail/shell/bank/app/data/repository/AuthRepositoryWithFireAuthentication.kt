@@ -92,6 +92,16 @@ class AuthRepositoryWithFireAuthentication @Inject constructor(
         try {
             val user = auth.signInWithCredential(authCredential).await().user
             val userid = user?.uid?: throw Exception()
+            val docRef = db.collection("profiles").document(userid)
+            if (!docRef.get().await().exists()) {
+                docRef.set(
+                    User(
+                        userid = userid,
+                        name = user.displayName.orEmpty(),
+                        gender = "Мужской"
+                    )
+                ).await()
+            }
             return Result.Success(userid)
         } catch (e: Exception) {
             return Result.Failure(AuthError.UNEXPECTED_ERROR)

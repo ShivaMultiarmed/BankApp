@@ -64,9 +64,14 @@ fun SignInScreen(
                 Text("Вы успешно вошли")
             }
         }
-        GoogleSignInButton {
-            onGoogleSubmit(it)
-        }
+        GoogleSignInButton(
+            onSuccess = {
+                onGoogleSubmit(it)
+            },
+            onFailure = {
+
+            }
+        )
         Text(
             text = "Зарегистрироваться?",
             Modifier.clickable {

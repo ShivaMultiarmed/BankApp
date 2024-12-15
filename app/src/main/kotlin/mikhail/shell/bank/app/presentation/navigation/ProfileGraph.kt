@@ -28,7 +28,6 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
         composable<Route.ProfileGraphRoute.ProfileScreenRoute>(
             typeMap = AppNavType.getMap(User.serializer())
         ) { navBackStackEntry ->
-
             val context = LocalContext.current
             val args = navBackStackEntry.toRoute<Route.ProfileGraphRoute.ProfileScreenRoute>()
             val profileViewModel =
@@ -37,40 +36,39 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
                 }
             val screenState by profileViewModel.screenState.collectAsStateWithLifecycle()
             val user = screenState.user
-            if (user?.userid != null) {
-                ApplicationScaffold(
-                    navController = navController,
-                    primaryNavigationItem = BottomNavigationItem.Profile(user.userid),
-                    title = "Профиль"
-                ) { innerPadding ->
-                    if (!screenState.isLoading) {
-                        if (user != null) {
-                            ProfileScreen(
-                                navController = navController,
-                                user = user,
-                                innerPadding = innerPadding,
-                                onSignOutClicked = {
-                                    profileViewModel.signOut()
-                                    context.removeUserId()
-                                    navController.navigate(Route.AuthGraph.SignInRoute) {
-                                        popUpTo<Route.ProfileGraphRoute.ProfileScreenRoute> {
-                                            inclusive = true
-                                        }
+            ApplicationScaffold(
+                navController = navController,
+                primaryNavigationItem = BottomNavigationItem.Profile(user?.userid.orEmpty()),
+                title = "Профиль"
+            ) { innerPadding ->
+                if (!screenState.isLoading) {
+                    if (user != null) {
+                        ProfileScreen(
+                            navController = navController,
+                            user = user,
+                            innerPadding = innerPadding,
+                            onSignOutClicked = {
+                                profileViewModel.signOut()
+                                context.removeUserId()
+                                navController.navigate(Route.AuthGraph.SignInRoute) {
+                                    popUpTo<Route.ProfileGraphRoute.ProfileScreenRoute> {
+                                        inclusive = true
                                     }
                                 }
-                            )
-                        } else {
-                            ErrorComponent(
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
+                            }
+                        )
                     } else {
-                        LoadingComponent(
+                        ErrorComponent(
                             modifier = Modifier.fillMaxSize()
                         )
                     }
+                } else {
+                    LoadingComponent(
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
+
         }
         settingsGraph(navController)
     }
