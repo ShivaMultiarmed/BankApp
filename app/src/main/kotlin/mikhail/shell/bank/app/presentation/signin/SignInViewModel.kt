@@ -50,10 +50,8 @@ class SignInViewModel @Inject constructor(
     }
     fun signInWithGoogle(credential: Credential) {
         viewModelScope.launch {
-            if (credential is CustomCredential &&
-                credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                _signInWithGoogle(googleIdTokenCredential).onSuccess {
+            if (credential is GoogleIdTokenCredential) {
+                _signInWithGoogle(credential).onSuccess {
                     _flow.value = SignInState(
                         userid = it,
                         error = null

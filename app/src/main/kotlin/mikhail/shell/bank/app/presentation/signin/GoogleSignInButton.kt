@@ -52,12 +52,6 @@ fun GoogleSignInButton(
             try {
                 coroutineScope.launch {
                     val info = task.await()
-                    val data = Bundle()
-                    Toast.makeText(context, info.idToken, Toast.LENGTH_SHORT).show()
-                    data.putString("idToken", info.idToken)
-                    data.putString("email", info.email)
-                    data.putString("userId", info.id)
-                    data.putString("displayName", info.displayName)
                     val credential = GoogleIdTokenCredential(
                         info.id.orEmpty(),
                         info.idToken.orEmpty(),
@@ -122,19 +116,9 @@ fun oneTapSignIn(
         } catch (e: GetCredentialCancellationException) {
 
         } catch (e: GetCredentialException) {
-            Toast.makeText(
-                context,
-                "Ошибка аутентификации: ${e.type}",
-                Toast.LENGTH_SHORT
-            ).show()
             onFailure(e)
             Log.e("Sign in with Google", e.stackTraceToString())
         } catch (e: Exception) {
-            Toast.makeText(
-                context,
-                "Ошибка аутентификации: ${e.message}",
-                Toast.LENGTH_SHORT
-            ).show()
             onFailure(e)
         }
     }
