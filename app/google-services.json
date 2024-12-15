@@ -13,7 +13,20 @@
           "package_name": "mikhail.shell.bank.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "299945402541-9idjpmfcqii4cnjae5nk6t3ffbuj5mvi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mikhail.shell.bank.app",
+            "certificate_hash": "8e612477d36f6b2acbeec878e5d29621d9e507a2"
+          }
+        },
+        {
+          "client_id": "299945402541-mv7h7un7vlu2h7f11l3365pv3v8d9u5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCJPQy24jEsT6QTepIILQ6fWgwcmI6em3k"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "299945402541-0mkrp263kghp5n2550f41trebn6vfjei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

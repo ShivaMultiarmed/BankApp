@@ -7,7 +7,6 @@ plugins {
     id ("dagger.hilt.android.plugin")
     alias(libs.plugins.google.gms.google.services) apply true
 }
-
 android {
     namespace = "mikhail.shell.bank.app"
     compileSdk = 35
@@ -35,11 +34,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -64,11 +63,19 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation(libs.firebase.database)
     implementation(libs.firebase.bom)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.googleid)
+
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

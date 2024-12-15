@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import mikhail.shell.bank.app.presentation.navigation.Route
-import mikhail.shell.bank.app.domain.errors.SignUpError
+import mikhail.shell.bank.app.domain.errors.AuthError
 import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.presentation.profile.sections.Dropdown
 import mikhail.shell.bank.app.sharedpreferences.setUserId
@@ -81,12 +81,12 @@ fun SignUpScreen(
         if (state.error != null) {
             val errorMsg = when(state.error)
             {
-                SignUpError.EMAIL_EXISTS -> "Пользователь с таким e-mail уже существует."
-                SignUpError.EMAIL_EMPTY -> "Не заполнен e-mail"
-                SignUpError.PASSWORD_EMPTY -> "не заполнен пароль"
-                SignUpError.PASSWORD_INVALID -> "пароль слишком короткий"
-                SignUpError.MALFORMED_EMAIL -> "Некорректный e-mail"
-                SignUpError.UNEXPECTED_ERROR -> "Непредвиденная ошибка"
+                AuthError.EMAIL_EXISTS -> "Пользователь с таким e-mail уже существует."
+                AuthError.EMAIL_EMPTY -> "Не заполнен e-mail"
+                AuthError.PASSWORD_EMPTY -> "не заполнен пароль"
+                AuthError.PASSWORD_INVALID -> "пароль слишком короткий"
+                AuthError.MALFORMED_EMAIL -> "Некорректный e-mail"
+                AuthError.UNEXPECTED_ERROR -> "Непредвиденная ошибка"
             }
             Text(errorMsg)
         } else if (state.userid != null) {

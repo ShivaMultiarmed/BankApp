@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -14,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import kotlinx.coroutines.launch
 import mikhail.shell.bank.app.presentation.signin.SignInScreen
 import mikhail.shell.bank.app.presentation.signin.SignInViewModel
 import mikhail.shell.bank.app.presentation.signup.SignUpScreen
@@ -32,12 +34,18 @@ fun NavGraphBuilder.authGraph(
             val signInState by viewModel.stateFlow.collectAsStateWithLifecycle()
             var isFirstTimeLaunched by remember { mutableStateOf(true) }
             val context = LocalContext.current
+            val coroutineScope = rememberCoroutineScope()
             SignInScreen(
                 modifier = Modifier.fillMaxSize(),
                 navController = navController,
                 state = signInState,
                 onSubmit = { email, password ->
                     viewModel.signIn(email, password)
+                },
+                onGoogleSubmit = {
+                    coroutineScope.launch {
+                        viewModel.signInWithGoogle(it)
+                    }
                 }
             )
             if (context.getUserId() != null || signInState.userid != null) {

@@ -1,6 +1,7 @@
 package mikhail.shell.bank.app.presentation.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +28,7 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
         composable<Route.ProfileGraphRoute.ProfileScreenRoute>(
             typeMap = AppNavType.getMap(User.serializer())
         ) { navBackStackEntry ->
+
             val context = LocalContext.current
             val args = navBackStackEntry.toRoute<Route.ProfileGraphRoute.ProfileScreenRoute>()
             val profileViewModel =

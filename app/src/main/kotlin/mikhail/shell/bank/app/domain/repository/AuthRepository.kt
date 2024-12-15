@@ -1,8 +1,10 @@
 package mikhail.shell.bank.app.domain.repository
 
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import mikhail.shell.bank.app.domain.models.User
-import mikhail.shell.bank.app.domain.errors.SignUpError
+import mikhail.shell.bank.app.domain.errors.AuthError
 import mikhail.shell.bank.app.domain.models.Error
+import mikhail.shell.bank.app.domain.models.Result
 
 interface AuthRepository {
     fun checkIfSignedIn() : Boolean
@@ -17,7 +19,10 @@ interface AuthRepository {
         password: String,
         user: User,
         onSuccess: (User) -> Unit,
-        onFailure: (SignUpError) -> Unit
+        onFailure: (AuthError) -> Unit
     )
     fun signOut()
+    suspend fun signInWithGoogle(
+        credential: GoogleIdTokenCredential
+    ) : Result<String, AuthError>
 }

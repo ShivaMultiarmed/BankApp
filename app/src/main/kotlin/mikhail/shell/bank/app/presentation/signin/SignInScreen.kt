@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.credentials.Credential
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import mikhail.shell.bank.app.presentation.navigation.Route
@@ -22,7 +24,8 @@ fun SignInScreen(
     modifier: Modifier = Modifier,
     state: SignInState = SignInState(),
     navController: NavController = rememberNavController(),
-    onSubmit: (String, String) -> Unit
+    onSubmit: (String, String) -> Unit,
+    onGoogleSubmit: (Credential) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -60,6 +63,9 @@ fun SignInScreen(
             if (state.userid != null) {
                 Text("Вы успешно вошли")
             }
+        }
+        GoogleSignInButton {
+            onGoogleSubmit(it)
         }
         Text(
             text = "Зарегистрироваться?",

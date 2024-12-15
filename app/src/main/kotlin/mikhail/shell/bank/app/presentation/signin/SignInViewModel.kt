@@ -1,27 +1,26 @@
 package mikhail.shell.bank.app.presentation.signin
 
+import androidx.credentials.Credential
+import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.FirebaseApiNotAvailableException
-import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import mikhail.shell.bank.app.domain.models.NetworkError
-import mikhail.shell.bank.app.domain.models.SignInError
 import mikhail.shell.bank.app.domain.usecases.CheckIfSignedIn
 import mikhail.shell.bank.app.domain.usecases.SignIn
+import mikhail.shell.bank.app.domain.usecases.SignInWithGoogle
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val checkIfSignedInUseCase: CheckIfSignedIn,
-    private val signInUseCase: SignIn
+    private val _checkIfSignedIn: CheckIfSignedIn,
+    private val _signIn: SignIn,
+    private val _signInWithGoogle: SignInWithGoogle
 ) : ViewModel() {
     private val _flow = MutableStateFlow(SignInState())
     val stateFlow = _flow.stateIn(
@@ -29,12 +28,12 @@ class SignInViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(5000),
         _flow.value
     )
-    fun checkIfSignedIn() = checkIfSignedInUseCase()
+    fun checkIfSignedIn() = _checkIfSignedIn()
     fun signIn(
         email: String,
         password: String
     ) {
-        signInUseCase(
+        _signIn(
             email,
             password,
             {
@@ -48,5 +47,19 @@ class SignInViewModel @Inject constructor(
                 }
             }
         )
+    }
+    fun signInWithGoogle(credential: Credential) {
+        viewModelScope.launch {
+            if (credential is CustomCredential &&
+                credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                _signInWithGoogle(googleIdTokenCredential).onSuccess {
+                    _flow.value = SignInState(
+                        userid = it,
+                        error = null
+                    )
+                }
+            }
+        }
     }
 }
