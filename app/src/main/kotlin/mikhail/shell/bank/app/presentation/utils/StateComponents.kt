@@ -1,9 +1,13 @@
 package mikhail.shell.bank.app.presentation.utils
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,17 +32,22 @@ fun LoadingComponent(
 
 @Composable
 fun ErrorComponent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRetry: () -> Unit
 ) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            modifier = Modifier.size(60.dp),
-            imageVector = Icons.Rounded.ErrorOutline,
+            modifier = Modifier
+                .size(60.dp)
+                .clickable {
+                    onRetry()
+                },
+            imageVector = Icons.Rounded.Refresh,
             tint = MaterialTheme.colorScheme.error,
-            contentDescription = null
+            contentDescription = "Перезагрузить",
         )
     }
 }

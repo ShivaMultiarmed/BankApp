@@ -1,11 +1,13 @@
 package mikhail.shell.bank.app.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
 import mikhail.shell.bank.app.domain.errors.ProfileError
 import mikhail.shell.bank.app.domain.models.User
 import mikhail.shell.bank.app.domain.repository.ProfileRepository
 import javax.inject.Inject
+import mikhail.shell.bank.app.domain.models.Result
 
 class ProfileRepositoryWithFireStore @Inject constructor(
     private val db: FirebaseFirestore
@@ -13,15 +15,17 @@ class ProfileRepositoryWithFireStore @Inject constructor(
 
     private val users = db.collection("profiles")
 
-    override suspend fun fetchProfile(userid: String): User {
-        val map = users.document(userid).get().await().data
-        return map?.let {
-            User(
-                userid = it["userid"] as String,
-                name = it["name"] as String,
-                gender = it["gender"] as String
-            )
-        } ?: User()
+    override suspend fun fetchProfile(userid: String): Result<User, ProfileError> {
+        return try {
+            val map = users.document(userid).get().await().data
+            Result.Success(User(
+                userid = map!!["userid"] as String,
+                name = map!!["name"] as String,
+                gender = map!!["gender"] as String
+            ))
+        } catch (e: Exception) {
+            Result.Failure(ProfileError.UNEXPECTED_ERROR)
+        }
     }
 
     override fun createProfile(
@@ -29,8 +33,6 @@ class ProfileRepositoryWithFireStore @Inject constructor(
         onSuccess: (String) -> Unit,
         onFailure: (ProfileError) -> Unit
     ) {
-//        val document = users.document()
-//        document.set(user.copy(userid = document.id)).await()
         users.add(user)
             .addOnSuccessListener { docRef ->
                 val userid = docRef.id

@@ -59,7 +59,10 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
                         )
                     } else {
                         ErrorComponent(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            onRetry = {
+                                profileViewModel.loadProfile()
+                            }
                         )
                     }
                 } else {

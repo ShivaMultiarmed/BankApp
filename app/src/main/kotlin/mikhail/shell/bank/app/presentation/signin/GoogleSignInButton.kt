@@ -2,10 +2,14 @@ package mikhail.shell.bank.app.presentation.signin
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -40,25 +44,6 @@ fun GoogleSignInButton(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    Button(
-        onClick = {
-            if (GoogleSignIn.getLastSignedInAccount(context) != null) {
-                oneTapSignIn(
-                    context,
-                    coroutineScope,
-                    onSuccess,
-                    {
-                        onFailure(Exception())
-                        defaultGoogleSignIn(context)
-                    })
-            }
-            defaultGoogleSignIn(context)
-        }
-    ) {
-        Text(
-            text = "Войти через Google"
-        )
-    }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
@@ -73,9 +58,14 @@ fun GoogleSignInButton(
                     data.putString("email", info.email)
                     data.putString("userId", info.id)
                     data.putString("displayName", info.displayName)
-                    val credential = CustomCredential(
-                        type = TYPE_GOOGLE_ID_TOKEN_CREDENTIAL,
-                        data = data
+                    val credential = GoogleIdTokenCredential(
+                        info.id.orEmpty(),
+                        info.idToken.orEmpty(),
+                        info.displayName,
+                        info.familyName,
+                        info.givenName,
+                        info.photoUrl,
+                        null
                     )
                     onSuccess(credential)
                 }
@@ -84,6 +74,28 @@ fun GoogleSignInButton(
             }
         }
     }
+
+    Button(
+        onClick = {
+            if (GoogleSignIn.getLastSignedInAccount(context) != null) {
+                oneTapSignIn(
+                    context,
+                    coroutineScope,
+                    onSuccess,
+                    {
+                        defaultGoogleSignIn(context, launcher)
+                    }
+                )
+            } else {
+                defaultGoogleSignIn(context, launcher)
+            }
+        }
+    ) {
+        Text(
+            text = "Войти через Google"
+        )
+    }
+
 }
 fun oneTapSignIn(
     context: Context,
@@ -115,7 +127,7 @@ fun oneTapSignIn(
                 "Ошибка аутентификации: ${e.type}",
                 Toast.LENGTH_SHORT
             ).show()
-
+            onFailure(e)
             Log.e("Sign in with Google", e.stackTraceToString())
         } catch (e: Exception) {
             Toast.makeText(
@@ -123,12 +135,14 @@ fun oneTapSignIn(
                 "Ошибка аутентификации: ${e.message}",
                 Toast.LENGTH_SHORT
             ).show()
+            onFailure(e)
         }
     }
 }
 
 fun defaultGoogleSignIn(
     context: Context,
+    resultLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
     val client = GoogleSignIn.getClient(
         context,
@@ -138,5 +152,5 @@ fun defaultGoogleSignIn(
             .build()
     )
     val intent = client.signInIntent
-    (context as Activity).startActivityForResult(intent, 1000)
+    resultLauncher.launch(intent)
 }

@@ -8,48 +8,61 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import mikhail.shell.bank.app.domain.models.User
+import mikhail.shell.bank.app.domain.errors.ProfileError
 import mikhail.shell.bank.app.domain.usecases.GetProfile
 import mikhail.shell.bank.app.domain.usecases.SignOut
 
 @HiltViewModel(assistedFactory = ProfileViewModel.Factory::class)
 class ProfileViewModel @AssistedInject constructor(
     @Assisted private val userid: String,
-    private val getProfile: GetProfile,
+    private val _getProfile: GetProfile,
     private val _signOut: SignOut
 ) : ViewModel() {
-    private val _profile = MutableStateFlow<User?>(null)
-
-
-    init {
-        viewModelScope.launch {
-            val user = getProfile(userid)
-            _profile.emit(user)
-        }
-    }
-
-    val screenState = combine(_profile) { collectedProfile ->
-        val user = collectedProfile[0]
-        ProfileScreenState(
-            isLoading = false,
-            user = user
-        )
-    }.catch {
+    private val _screenState = MutableStateFlow(ProfileScreenState())
+    val screenState = _screenState.catch {
         emit(
             ProfileScreenState(
-                isLoading = false,
-                user = null
+                user = null,
+                error = ProfileError.UNEXPECTED_ERROR,
+                isLoading = false
             )
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        ProfileScreenState()
+        SharingStarted.WhileSubscribed(1000),
+        _screenState.value
     )
+
+    init {
+        loadProfile()
+    }
+
+    fun loadProfile() {
+        _screenState.value = ProfileScreenState()
+        viewModelScope.launch {
+            _getProfile(userid)
+                .onSuccess {
+                    _screenState.value = ProfileScreenState(
+                        isLoading = false,
+                        error = null,
+                        user = it
+                    )
+                }.onFailure {
+                    _screenState.value = ProfileScreenState(
+                        isLoading = false,
+                        error = it,
+                        user = null
+                    )
+                }
+        }
+    }
 
     fun signOut() = _signOut()
 
